@@ -65,3 +65,4 @@ describe('Progress tracking and filtering logic mechanical verification', () => 
     assert.strictEqual(parsed.isSampleMode, true);
   });
 });
+

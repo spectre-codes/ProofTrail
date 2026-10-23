@@ -58,3 +58,4 @@ export function Navbar({ isSampleMode, onReset, itemCount }: NavbarProps) {
     </header>
   );
 }
+
