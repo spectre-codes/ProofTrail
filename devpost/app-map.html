@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ProofTrail — Architecture Map & Takeaway</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --emerald: #059669;
+      --emerald-bg: #ecfdf5;
+      --amber: #d97706;
+      --amber-bg: #fffbeb;
+      --indigo: #4f46e5;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2rem 1rem;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 2.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    }
+    header {
+      border-b: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      background: var(--emerald-bg);
+      color: var(--emerald);
+      margin-bottom: 0.5rem;
+    }
+    h1 { font-size: 1.75rem; font-weight: 800; color: var(--text); margin-bottom: 0.5rem; }
+    h2 { font-size: 1.25rem; font-weight: 700; margin: 2rem 0 1rem; color: var(--text); }
+    h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.25rem; }
+    p { margin-bottom: 1rem; color: #334155; }
+    .muted { color: var(--text-muted); font-size: 0.875rem; }
+    
+    /* Diagram */
+    .diagram-container {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      text-align: center;
+    }
+    svg text { font-family: inherit; }
+
+    /* Stops / Route */
+    .route-stop {
+      border-left: 3px solid var(--emerald);
+      padding-left: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .route-stop code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.85rem;
+      background: #f1f5f9;
+      padding: 0.15rem 0.4rem;
+      border-radius: 0.25rem;
+      color: #0f172a;
+    }
+
+    /* Details reveals */
+    details {
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.75rem;
+      background: #fafafa;
+    }
+    summary {
+      font-weight: 600;
+      cursor: pointer;
+      color: #1e293b;
+    }
+    details[open] { background: var(--surface); }
+    details p { margin-top: 0.75rem; font-size: 0.9rem; }
+
+    /* Reusable practice box */
+    .takeaway-card {
+      background: var(--emerald-bg);
+      border: 1px solid #a7f3d0;
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      margin-top: 1.5rem;
+    }
+    .takeaway-title {
+      font-weight: 700;
+      color: #065f46;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    footer {
+      margin-top: 2.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <span class="badge">Architecture App Map</span>
+      <h1>ProofTrail</h1>
+      <p>An evidence-backed requirements & action checklist extractor with deterministic quote verification and ambiguity detection.</p>
+      <p class="muted">Generated for Build With AI: Basics hackathon • Offline-safe snapshot</p>
+    </header>
+
+    <section>
+      <h2>System Overview</h2>
+      <p>ProofTrail splits messy instructions into verifiable actions. The AI model extracts structured candidates, but deterministic code validates ground truth against the original source text before display.</p>
+
+      <div class="diagram-container">
+        <svg viewBox="0 0 700 130" width="100%" height="130" xmlns="http://www.w3.org/2000/svg">
+          <!-- Step 1: Input -->
+          <rect x="10" y="25" width="140" height="70" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+          <text x="80" y="55" font-size="12" font-weight="700" text-anchor="middle" fill="#0f172a">Source Input</text>
+          <text x="80" y="73" font-size="10" text-anchor="middle" fill="#64748b">Raw Brief / Sample</text>
+
+          <!-- Arrow 1 -->
+          <line x1="150" y1="60" x2="190" y2="60" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+
+          <!-- Step 2: Next.js API -->
+          <rect x="190" y="25" width="145" height="70" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+          <text x="262" y="52" font-size="12" font-weight="700" text-anchor="middle" fill="#0f172a">API Route</text>
+          <text x="262" y="68" font-size="10" text-anchor="middle" fill="#4f46e5">Gemini 2.5 Flash</text>
+          <text x="262" y="82" font-size="9" text-anchor="middle" fill="#64748b">+ Demo Fallback</text>
+
+          <!-- Arrow 2 -->
+          <line x1="335" y1="60" x2="375" y2="60" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+
+          <!-- Step 3: Verification -->
+          <rect x="375" y="25" width="140" height="70" rx="8" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+          <text x="445" y="52" font-size="12" font-weight="700" text-anchor="middle" fill="#065f46">Verification Engine</text>
+          <text x="445" y="68" font-size="10" text-anchor="middle" fill="#059669">lib/verifyQuote.ts</text>
+          <text x="445" y="82" font-size="9" text-anchor="middle" fill="#047857">Deterministic match</text>
+
+          <!-- Arrow 3 -->
+          <line x1="515" y1="60" x2="555" y2="60" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+
+          <!-- Step 4: UI -->
+          <rect x="555" y="25" width="135" height="70" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+          <text x="622" y="52" font-size="12" font-weight="700" text-anchor="middle" fill="#0f172a">Interactive UI</text>
+          <text x="622" y="68" font-size="10" text-anchor="middle" fill="#d97706">Bidirectional Scroll</text>
+          <text x="622" y="82" font-size="9" text-anchor="middle" fill="#64748b">localStorage State</text>
+
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 8 5 L 0 9 z" fill="#94a3b8" />
+            </marker>
+          </defs>
+        </svg>
+      </div>
+    </section>
+
+    <section>
+      <h2>Core Code Reference Route</h2>
+
+      <div class="route-stop">
+        <h3>1. Deterministic Verification Kernel</h3>
+        <p><code>lib/verifyQuote.ts</code> • Function: <code>verifyQuote</code> & <code>normalizeText</code></p>
+        <p class="muted">Normalizes smart quotes, linebreaks, and repeated whitespace. Searches for normalized quotes in source text. Dispatches items into <code>VERIFIED</code>, <code>AMBIGUOUS</code>, or <code>UNVERIFIED</code>.</p>
+      </div>
+
+      <div class="route-stop">
+        <h3>2. Structured AI Extraction & Demo Fallback</h3>
+        <p><code>app/api/analyze/route.ts</code> • Function: <code>POST</code></p>
+        <p class="muted">Prompts Gemini 2.5 Flash using <code>responseSchema</code> for structured output. Automatically falls back to <code>lib/sampleData.ts</code> if no API key is configured so demos never break.</p>
+      </div>
+
+      <div class="route-stop">
+        <h3>3. Bidirectional Quote Highlighting & Scroll</h3>
+        <p><code>components/SourcePanel.tsx</code> • Function: <code>renderHighlightedContent</code></p>
+        <p class="muted">Wraps matched quotes in interactive <code>&lt;mark&gt;</code> elements with scroll anchor IDs. Clicking a checklist card highlights and scrolls to the exact quote in the source panel.</p>
+      </div>
+
+      <div class="route-stop">
+        <h3>4. Task Progress & Persistence</h3>
+        <p><code>app/page.tsx</code> & <code>components/ChecklistPanel.tsx</code></p>
+        <p class="muted">Calculates completion percentages, supports filter pills (Deliverables, Deadlines, Rules), and synchronizes state to <code>localStorage</code> under key <code>prooftrail_session</code>.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>To Change This, Start Here</h2>
+      <details>
+        <summary>To add new ambiguity checks (e.g. currency / platform rules)</summary>
+        <p>Open <code>app/api/analyze/route.ts</code> and update the <code>SYSTEM_INSTRUCTION</code> and <code>ambiguityReason</code> description in <code>EXTRACTION_SCHEMA</code>.</p>
+      </details>
+      <details>
+        <summary>To change the sample brief text</summary>
+        <p>Edit <code>lib/sampleData.ts</code> (update <code>SAMPLE_BRIEF_TEXT</code> and corresponding <code>PRECOMPUTED_SAMPLE_ITEMS</code>).</p>
+      </details>
+      <details>
+        <summary>To adjust quote normalization logic</summary>
+        <p>Open <code>lib/verifyQuote.ts</code> and test your changes with <code>npm test</code> against <code>lib/__tests__/verifyQuote.test.ts</code>.</p>
+      </details>
+    </section>
+
+    <div class="takeaway-card">
+      <div class="takeaway-title">
+        <span>💡 A Practice to Reuse: Deterministic Verification of LLM Claims</span>
+      </div>
+      <p>When asking AI models to extract evidence from documents, never rely on the model's self-assessment to verify its own accuracy. By pairing structured model extraction with a deterministic string-matching engine (as in <code>lib/verifyQuote.ts</code>), you eliminate hallucinations and protect users from false assumptions before displaying output.</p>
+    </div>
+
+    <footer>
+      <p><strong>Commands to run:</strong> <code>npm run dev</code> (starts local server on port 3000) • <code>npm test</code> (runs 13 unit & route tests)</p>
+      <p>ProofTrail • Build With AI: Basics Hackathon Submission</p>
+    </footer>
+  </div>
+</body>
+</html>

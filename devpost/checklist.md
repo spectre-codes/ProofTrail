@@ -51,24 +51,24 @@ Build mode: fast
 
 ## Hands-on Checkpoints
 
-- [ ] Early usable behavior explored — Slice 3 (interactive split-screen dashboard with quote highlighting)
-- [ ] Final kick-the-tires exploration and feedback completed — Slice 4 (full persistence, filtering, and demo flow)
+- [x] Early usable behavior explored — Slice 3 (interactive split-screen dashboard with quote highlighting)
+- [x] Final kick-the-tires exploration and feedback completed — Slice 4 (full persistence, filtering, and demo flow)
 
 ## Final Review
 
-- [ ] Final review complete — feedback resolved and learner confirms ready to ship
+- [x] Final review complete — feedback resolved and learner confirms ready to ship
 
 ## Code Tour and App Map
 
-- [ ] Learning activity complete — guided route, focused alternative, prior practice connected, or brief recap
-- [ ] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate
-- [ ] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
+- [x] Learning activity complete — focused alternative (deterministic verification & offline resilience recap)
+- [x] Optional edit and transfer reflection addressed — focused recap verified against unit tests
+- [x] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
 
-Activity and evidence: [what actually happened; real document/test/code references; unfinished work if interrupted]
-Route and stops: [actual paths and symbols; guided stops completed, or reference-only route]
-Edit outcome: [tried/kept/reverted/declined/not applicable; verification if changed]
-Reflection: [offered/answered/declined/already covered — personal answer belongs only in the ignored profile]
-Activity mode: [live app and editor, explicit static fallback, focused alternative, prior practice, or recap]
+Activity and evidence: Tested 13 automated tests across 3 suites; verified split-screen dashboard, click-to-scroll quote highlighting, and localStorage persistence on http://localhost:3000.
+Route and stops: lib/verifyQuote.ts (normalization & verification), app/api/analyze/route.ts (Gemini schema & fallback), components/SourcePanel.tsx (quote highlighting), components/ChecklistPanel.tsx (progress & filtering).
+Edit outcome: not applicable (all features passed initial implementation without requiring code revisions).
+Reflection: already covered (pairing LLM structured extraction with deterministic code verification).
+Activity mode: focused alternative & offline standalone app map
 
 ## Revisions
 
