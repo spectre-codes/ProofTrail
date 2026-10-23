@@ -1,5 +1,7 @@
 import { verifyItems, type RawExtractedItem } from '../../../lib/verifyQuote.ts';
-import { PRECOMPUTED_SAMPLE_ITEMS, SAMPLE_BRIEF_TEXT } from '../../../lib/sampleData.ts';
+import { RAW_SAMPLE_CANDIDATE_ITEMS, SAMPLE_BRIEF_TEXT } from '../../../lib/sampleData.ts';
+
+const MAX_SOURCE_CHARS = 30000;
 
 const EXTRACTION_SCHEMA = {
   type: 'ARRAY',
@@ -32,55 +34,68 @@ const EXTRACTION_SCHEMA = {
   },
 };
 
-const SYSTEM_INSTRUCTION = `You are ProofTrail, a meticulous requirements analysis engine.
-Extract all concrete deliverables, deadlines, and critical rules/constraints from the provided project brief or instructions.
+const SYSTEM_INSTRUCTION = `You are ProofTrail, a forensic document requirements auditor.
+Your job is to extract all concrete deliverables, deadlines, and critical rules/constraints from the provided project brief or instructions.
 
 CRITICAL EVIDENCE RULES:
-1. "verbatimQuote" MUST be an exact, character-for-character substring copied directly from the provided text. Never paraphrase, alter, or synthesize words in verbatimQuote.
-2. If a deadline or rule is vague, missing a timezone, missing a specific calendar date (e.g. "submit by Friday"), or unspecified format, set "isAmbiguous" to true and provide a concise "ambiguityReason".
+1. "verbatimQuote" MUST be an exact, character-for-character substring copied directly from the provided text. Never paraphrase, alter, synthesize, or combine words in verbatimQuote.
+2. If a deadline or rule is vague, missing a timezone, missing a specific calendar date (e.g. "submit by Friday"), or has an unspecified file/submission format, set "isAmbiguous" to true and provide a concise "ambiguityReason".
 3. Return only valid JSON conforming strictly to the requested schema.`;
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const sourceText = body.text ? String(body.text).trim() : '';
+    const body = await req.json().catch(() => ({}));
+    const sourceText = typeof body.text === 'string' ? body.text.trim() : '';
 
     if (!sourceText) {
       return Response.json(
-        { error: 'Source text cannot be empty' },
+        { error: 'Source text cannot be empty. Please paste your brief or click "Load Sample Brief".' },
         { status: 400 }
+      );
+    }
+
+    if (sourceText.length > MAX_SOURCE_CHARS) {
+      return Response.json(
+        { error: `Source text exceeds maximum limit of ${MAX_SOURCE_CHARS.toLocaleString()} characters (current: ${sourceText.length.toLocaleString()} characters). Please shorten the brief.` },
+        { status: 413 }
       );
     }
 
     const apiKey = process.env.GEMINI_API_KEY?.trim();
 
-    // Zero-Config Demo Mode Fallback:
-    // If no API key is configured, return pre-computed verified data for sample brief
-    // or prompt for key if custom text was provided
+    // OFFLINE VERIFICATION SANDBOX / DEMO MODE:
+    // If no API key is configured, execute RUNTIME deterministic verification
+    // on candidate items against the source text so the verification engine is genuinely tested.
     if (!apiKey) {
-      console.log('No GEMINI_API_KEY detected. Running in Demo / Sample Mode.');
-      
-      const isSampleBrief = sourceText.includes('BUILD WITH AI: BASICS HACKATHON') ||
-                            sourceText.length === SAMPLE_BRIEF_TEXT.trim().length;
+      const isSampleBrief =
+        sourceText.includes('BUILD WITH AI: BASICS HACKATHON') ||
+        Math.abs(sourceText.length - SAMPLE_BRIEF_TEXT.trim().length) < 50;
 
       if (isSampleBrief) {
+        // Run verifyItems at runtime against the actual submitted text!
+        const verifiedItems = verifyItems(sourceText, RAW_SAMPLE_CANDIDATE_ITEMS);
+
         return Response.json({
-          items: PRECOMPUTED_SAMPLE_ITEMS,
+          items: verifiedItems,
           isSampleMode: true,
-          modelUsed: 'offline-sample-evaluator',
-          message: 'Running in Demo Mode (no API key configured). Pre-computed verification loaded.',
+          modelUsed: 'offline-verification-sandbox',
+          message: 'Offline Verification Sandbox: Evaluated candidates at runtime with lib/verifyQuote.ts.',
         });
       }
 
+      // If user provided arbitrary custom text without an API key, run verification on sample candidates
+      // against their text (which demonstrates hallucination catching if text doesn't contain the quotes)
+      const verifiedItems = verifyItems(sourceText, RAW_SAMPLE_CANDIDATE_ITEMS);
+
       return Response.json({
-        items: [],
+        items: verifiedItems,
         isSampleMode: true,
-        modelUsed: 'none',
-        message: 'No GEMINI_API_KEY configured. Please add GEMINI_API_KEY to .env.local to analyze custom text, or click "Load Sample Brief" to test ProofTrail in Demo Mode.',
+        modelUsed: 'offline-verification-sandbox',
+        message: 'No GEMINI_API_KEY configured in .env.local. Running sample audit candidates through the verification engine against your text.',
       });
     }
 
-    // Call Gemini 2.5 Flash with structured output schema
+    // LIVE GEMINI 2.5 FLASH EXTRACTION + RUNTIME VERIFICATION
     try {
       const { GoogleGenAI } = await import('@google/genai');
       const ai = new GoogleGenAI({ apiKey });
@@ -107,7 +122,8 @@ export async function POST(req: Request) {
       const responseText = response.text?.trim() || '[]';
       const rawItems: RawExtractedItem[] = JSON.parse(responseText);
 
-      // DETERMINISTIC SERVER-SIDE VERIFICATION:
+      // DETERMINISTIC RUNTIME VERIFICATION:
+      // Verify every extracted candidate quote against the original source text
       const verifiedItems = verifyItems(sourceText, rawItems);
 
       return Response.json({
@@ -117,19 +133,21 @@ export async function POST(req: Request) {
       });
     } catch (apiError: any) {
       console.error('Gemini API call error:', apiError);
-      
+
+      // Graceful fallback for sample brief during demo presentations if API fails
       if (sourceText.includes('BUILD WITH AI: BASICS HACKATHON')) {
+        const verifiedItems = verifyItems(sourceText, RAW_SAMPLE_CANDIDATE_ITEMS);
         return Response.json({
-          items: PRECOMPUTED_SAMPLE_ITEMS,
+          items: verifiedItems,
           isSampleMode: true,
-          modelUsed: 'fallback-sample',
-          error: apiError?.message || 'Gemini API call failed; loaded pre-computed demo results.',
+          modelUsed: 'fallback-verification-sandbox',
+          error: apiError?.message || 'Gemini API call failed; loaded offline verification candidates.',
         });
       }
 
       return Response.json(
         {
-          error: `Gemini API error: ${apiError?.message || 'Failed to analyze text'}. Please check your API key in .env.local.`,
+          error: `Gemini API error: ${apiError?.message || 'Failed to analyze text'}. Verify GEMINI_API_KEY in .env.local.`,
           isSampleMode: false,
         },
         { status: 502 }

@@ -16,11 +16,14 @@ export interface ChecklistItem extends RawExtractedItem {
   completed: boolean;
   matchStartIndex?: number;
   matchEndIndex?: number;
+  matchedText?: string;
+  occurrenceCount: number;
 }
 
 /**
- * Normalizes text for robust substring matching:
- * - Converts typographic / smart quotes to ASCII equivalents
+ * Normalizes text for clean fallback substring search:
+ * - Converts typographic smart quotes to ASCII equivalents
+ * - Normalizes various dashes to standard hyphen
  * - Collapses repeated whitespace & newlines to a single space
  * - Trims leading & trailing whitespace
  */
@@ -29,13 +32,39 @@ export function normalizeText(text: string): string {
   return text
     .replace(/[\u2018\u2019]/g, "'")
     .replace(/[\u201C\u201D]/g, '"')
+    .replace(/[\u2013\u2014]/g, '-')
     .replace(/\s+/g, ' ')
     .trim();
 }
 
 /**
+ * Constructs a flexible RegExp matching the quote against the original source text,
+ * accounting for whitespace variations (newlines/tabs), smart quotes, and dashes,
+ * without mutating or misaligning original character offsets.
+ */
+function buildFlexibleRegex(quote: string, flags: string = 'gi'): RegExp | null {
+  const trimmed = quote.trim();
+  if (!trimmed) return null;
+
+  const words = trimmed.split(/\s+/);
+  const escapedWords = words.map((w) =>
+    w
+      .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      .replace(/['"\u2018\u2019\u201C\u201D]/g, `['"\\u2018\\u2019\\u201C\\u201D]`)
+      .replace(/[-—–\u2010\u2013\u2014]/g, `[-—–\\u2010\\u2013\\u2014]`)
+  );
+
+  const pattern = escapedWords.join('\\s+');
+  try {
+    return new RegExp(pattern, flags);
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Deterministically verifies an extracted quote against the source text.
- * Returns verification status and character offsets if matched.
+ * Calculates exact original-string start/end boundaries and occurrence counts.
  */
 export function verifyQuote(
   sourceText: string,
@@ -46,50 +75,87 @@ export function verifyQuote(
   status: VerificationStatus;
   matchStartIndex?: number;
   matchEndIndex?: number;
+  matchedText?: string;
+  occurrenceCount: number;
   ambiguityReason?: string;
 } {
   if (!sourceText || !quote || !quote.trim()) {
     return {
       status: 'UNVERIFIED',
+      occurrenceCount: 0,
       ambiguityReason: 'No source quote provided by extraction model',
     };
   }
 
-  // First try direct literal match
-  const literalIndex = sourceText.indexOf(quote);
-  if (literalIndex !== -1) {
+  // 1. Literal Exact Match Check
+  const literalOccurrences: number[] = [];
+  let pos = sourceText.indexOf(quote);
+  while (pos !== -1) {
+    literalOccurrences.push(pos);
+    pos = sourceText.indexOf(quote, pos + 1);
+  }
+
+  if (literalOccurrences.length > 0) {
+    const startIndex = literalOccurrences[0];
+    const endIndex = startIndex + quote.length;
     return {
       status: isAmbiguous ? 'AMBIGUOUS' : 'VERIFIED',
-      matchStartIndex: literalIndex,
-      matchEndIndex: literalIndex + quote.length,
+      matchStartIndex: startIndex,
+      matchEndIndex: endIndex,
+      matchedText: sourceText.slice(startIndex, endIndex),
+      occurrenceCount: literalOccurrences.length,
       ambiguityReason: isAmbiguous ? ambiguityReason : undefined,
     };
   }
 
-  // Second: try normalized matching (handling smart quotes & whitespace differences)
+  // 2. Flexible Regex Match (Maps directly to original source text characters)
+  const regex = buildFlexibleRegex(quote, 'gi');
+  if (regex) {
+    const matches: RegExpExecArray[] = [];
+    let match: RegExpExecArray | null;
+    while ((match = regex.exec(sourceText)) !== null) {
+      matches.push(match);
+      if (match.index === regex.lastIndex) regex.lastIndex++; // Avoid zero-width infinite loops
+    }
+
+    if (matches.length > 0) {
+      const first = matches[0];
+      const startIndex = first.index;
+      const endIndex = startIndex + first[0].length;
+      return {
+        status: isAmbiguous ? 'AMBIGUOUS' : 'VERIFIED',
+        matchStartIndex: startIndex,
+        matchEndIndex: endIndex,
+        matchedText: sourceText.slice(startIndex, endIndex),
+        occurrenceCount: matches.length,
+        ambiguityReason: isAmbiguous ? ambiguityReason : undefined,
+      };
+    }
+  }
+
+  // 3. Fallback Normalized Substring Check (Hallucination Guard)
   const normSource = normalizeText(sourceText).toLowerCase();
   const normQuote = normalizeText(quote).toLowerCase();
 
-  const normIndex = normSource.indexOf(normQuote);
-  if (normIndex !== -1) {
-    // Attempt approximate mapping back to original text or normalized boundaries
+  if (normQuote && normSource.includes(normQuote)) {
+    // Quote matched under normalization, but could not map cleanly via regex
     return {
       status: isAmbiguous ? 'AMBIGUOUS' : 'VERIFIED',
-      matchStartIndex: normIndex,
-      matchEndIndex: normIndex + normQuote.length,
+      occurrenceCount: 1,
       ambiguityReason: isAmbiguous ? ambiguityReason : undefined,
     };
   }
 
-  // Not found in source text: flagged as unverified (hallucination guard)
+  // Not found in source text: flagged as unverified (hallucination caught)
   return {
     status: 'UNVERIFIED',
-    ambiguityReason: 'Quote could not be deterministically matched in source text',
+    occurrenceCount: 0,
+    ambiguityReason: 'Quote could not be deterministically matched in source text (no verbatim evidence found)',
   };
 }
 
 /**
- * Verifies an array of extracted items against source text.
+ * Verifies an array of extracted candidate items against source text.
  */
 export function verifyItems(
   sourceText: string,
@@ -104,7 +170,7 @@ export function verifyItems(
     );
 
     return {
-      id: item.id || `item-${index + 1}-${Date.now()}`,
+      id: item.id || `audit-item-${index + 1}-${Date.now()}`,
       title: item.title,
       category: item.category,
       verbatimQuote: item.verbatimQuote,
@@ -114,7 +180,8 @@ export function verifyItems(
       completed: false,
       matchStartIndex: verification.matchStartIndex,
       matchEndIndex: verification.matchEndIndex,
+      matchedText: verification.matchedText,
+      occurrenceCount: verification.occurrenceCount,
     };
   });
 }
-

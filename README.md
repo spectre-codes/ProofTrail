@@ -113,3 +113,4 @@ This project was built following the plan-first *Build With AI: Basics* methodol
 - 📐 [Technical Specification](devpost/spec.md)
 - 🔨 [Build Checklist & Slices](devpost/checklist.md)
 - 🗺️ [Architecture App Map](devpost/app-map.html)
+

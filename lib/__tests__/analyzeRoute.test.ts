@@ -11,13 +11,27 @@ describe('API Route /api/analyze mechanical verification', () => {
       headers: { 'Content-Type': 'application/json' },
     });
 
-    const res = await POST(req as any);
+    const res = await POST(req);
     assert.strictEqual(res.status, 400);
     const data = await res.json();
     assert.ok(data.error.includes('cannot be empty'));
   });
 
-  it('returns pre-computed verified items in Demo/Sample Mode when API key is missing', async () => {
+  it('returns 413 when text exceeds character limit', async () => {
+    const hugeText = 'A'.repeat(30005);
+    const req = new Request('http://localhost:3000/api/analyze', {
+      method: 'POST',
+      body: JSON.stringify({ text: hugeText }),
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const res = await POST(req);
+    assert.strictEqual(res.status, 413);
+    const data = await res.json();
+    assert.ok(data.error.includes('exceeds maximum limit'));
+  });
+
+  it('runs runtime verification on sample candidates exhibiting all 3 states (VERIFIED, AMBIGUOUS, UNVERIFIED)', async () => {
     const oldKey = process.env.GEMINI_API_KEY;
     delete process.env.GEMINI_API_KEY;
 
@@ -27,24 +41,30 @@ describe('API Route /api/analyze mechanical verification', () => {
       headers: { 'Content-Type': 'application/json' },
     });
 
-    const res = await POST(req as any);
+    const res = await POST(req);
     assert.strictEqual(res.status, 200);
     const data = await res.json();
 
     assert.strictEqual(data.isSampleMode, true);
     assert.ok(Array.isArray(data.items));
-    assert.ok(data.items.length >= 5);
+    assert.strictEqual(data.items.length, 8);
 
-    // Verify presence of verified items
-    const verifiedItem = data.items.find((i: any) => i.status === 'VERIFIED');
-    assert.ok(verifiedItem, 'Should contain VERIFIED items');
+    // 1. Verify presence of VERIFIED items
+    const verifiedItems = data.items.filter((i: any) => i.status === 'VERIFIED');
+    assert.ok(verifiedItems.length >= 4, 'Should contain at least 4 VERIFIED items');
+    assert.ok(verifiedItems[0].occurrenceCount >= 1);
 
-    // Verify presence of ambiguous item with reason
-    const ambiguousItem = data.items.find((i: any) => i.status === 'AMBIGUOUS');
-    assert.ok(ambiguousItem, 'Should contain AMBIGUOUS item');
-    assert.ok(ambiguousItem.ambiguityReason?.length > 0, 'Ambiguous item must have an ambiguity reason');
+    // 2. Verify presence of AMBIGUOUS items with reasons
+    const ambiguousItems = data.items.filter((i: any) => i.status === 'AMBIGUOUS');
+    assert.ok(ambiguousItems.length >= 1, 'Should contain at least 1 AMBIGUOUS item');
+    assert.ok(ambiguousItems[0].ambiguityReason?.length > 0);
+
+    // 3. Verify presence of UNVERIFIED hallucination-caught item
+    const unverifiedItems = data.items.filter((i: any) => i.status === 'UNVERIFIED');
+    assert.strictEqual(unverifiedItems.length, 1, 'Should contain exactly 1 UNVERIFIED item (hallucination caught)');
+    assert.strictEqual(unverifiedItems[0].occurrenceCount, 0);
+    assert.ok(unverifiedItems[0].title.includes('affidavit'));
 
     if (oldKey) process.env.GEMINI_API_KEY = oldKey;
   });
 });
-
