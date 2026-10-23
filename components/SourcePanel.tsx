@@ -38,6 +38,13 @@ export function SourcePanel({
 }: SourcePanelProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Reset scroll to top when page initializes or when active item is deselected
+  useEffect(() => {
+    if (!activeItemId && containerRef.current) {
+      containerRef.current.scrollTop = 0;
+    }
+  }, [activeItemId]);
+
   // Auto-scroll to active quote whenever activeItemId changes
   useEffect(() => {
     if (activeItemId && !isEditing) {
@@ -194,7 +201,12 @@ export function SourcePanel({
 
           <button
             type="button"
-            onClick={onLoadSample}
+            onClick={() => {
+              if (containerRef.current) {
+                containerRef.current.scrollTop = 0;
+              }
+              onLoadSample();
+            }}
             disabled={isLoading}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono font-medium rounded-lg text-zinc-700 hover:text-zinc-950 bg-white hover:bg-zinc-100 border border-zinc-300 transition-colors shadow-2xs disabled:opacity-50"
           >

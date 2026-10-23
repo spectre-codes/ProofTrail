@@ -32,9 +32,9 @@ export function ChecklistCard({
 
   // Left accent border styling
   const getBorderAccent = () => {
-    if (isUnverified) return 'border-l-rose-500 hover:border-l-rose-600 bg-rose-50/15';
-    if (isAmbiguous) return 'border-l-amber-500 hover:border-l-amber-600 bg-amber-50/15';
-    return 'border-l-emerald-500 hover:border-l-emerald-600 bg-white';
+    if (isUnverified) return 'border-l-4 border-l-rose-500 bg-rose-50/15';
+    if (isAmbiguous) return 'border-l-4 border-l-amber-500 bg-amber-50/15';
+    return 'border-l-4 border-l-emerald-500 bg-white';
   };
 
   // Standardized Status Badges across the entire app
@@ -91,27 +91,24 @@ export function ChecklistCard({
   const renderMatchTelemetry = () => {
     if (isUnverified) {
       return (
-        <span className="text-rose-700 font-mono text-[11px] font-medium flex items-center gap-1">
-          <XCircle className="w-3 h-3 text-rose-600 inline" />
-          <span>Not found in source text · Potential hallucination</span>
+        <span className="text-rose-700 font-mono text-[11px] font-medium flex items-center gap-1 whitespace-nowrap">
+          <XCircle className="w-3 h-3 text-rose-600 inline shrink-0" />
+          <span>Not found in source text</span>
         </span>
       );
     }
 
     if (isAmbiguous) {
-      const reasonSnippet = item.ambiguityReason
-        ? item.ambiguityReason.replace(/^Critical Ambiguity:\s*/i, '').replace(/^Unspecified Scope:\s*/i, '')
-        : 'Missing date/timezone';
       return (
-        <span className="text-amber-900 font-mono text-[11px] font-medium">
-          Found {item.occurrenceCount} occurrence{item.occurrenceCount > 1 ? 's' : ''} · Ambiguous: {reasonSnippet.slice(0, 42)}...
+        <span className="text-amber-900 font-mono text-[11px] font-medium whitespace-nowrap">
+          {item.occurrenceCount} occurrence{item.occurrenceCount > 1 ? 's' : ''} · Needs Review
         </span>
       );
     }
 
     return (
-      <span className="text-zinc-600 font-mono text-[11px]">
-        Found {item.occurrenceCount} occurrence{item.occurrenceCount > 1 ? 's' : ''} · Exact match (normalized)
+      <span className="text-slate-500 font-mono text-[11px] whitespace-nowrap">
+        {item.occurrenceCount} occurrence{item.occurrenceCount > 1 ? 's' : ''} · Exact match
       </span>
     );
   };
@@ -119,9 +116,9 @@ export function ChecklistCard({
   return (
     <div
       onClick={!isUnverified ? onSelect : undefined}
-      className={`group rounded-xl border border-zinc-200 border-l-4 p-4 transition-all duration-150 overflow-visible h-auto ${getBorderAccent()} ${
+      className={`group rounded-xl border border-zinc-200 p-4 transition-all duration-150 overflow-visible h-auto ${getBorderAccent()} ${
         isActive
-          ? 'ring-2 ring-zinc-900 ring-offset-2 shadow-md'
+          ? 'ring-2 ring-zinc-900 ring-offset-1 shadow-md'
           : 'hover:shadow-sm'
       }`}
     >
@@ -220,7 +217,7 @@ export function ChecklistCard({
 
         {/* Card Footer Row: Match Telemetry on Left, Mark Complete Checkbox on Right */}
         <div className="mt-1 pt-2.5 border-t border-zinc-200/80 flex items-center justify-between gap-3">
-          <div className="truncate mr-2">
+          <div className="min-w-0 mr-2 overflow-hidden">
             {renderMatchTelemetry()}
           </div>
 

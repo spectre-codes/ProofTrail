@@ -58,9 +58,9 @@ export function ChecklistPanel({
 
   return (
     <div className="flex flex-col h-full bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
-      {/* Panel Header */}
-      <div className="p-3.5 sm:p-4 border-b border-zinc-200 bg-zinc-50/80">
-        <div className="flex items-center justify-between mb-2.5">
+      {/* Panel Header Controls */}
+      <div className="p-3.5 sm:p-4 border-b border-zinc-200 bg-zinc-50/80 shrink-0 flex flex-col gap-2.5">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ListChecks className="w-5 h-5 text-zinc-700" />
             <h2 className="font-mono font-bold text-zinc-900 text-sm tracking-tight">
@@ -75,7 +75,7 @@ export function ChecklistPanel({
         </div>
 
         {/* 4 Interactive Summary Metric Tiles */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {/* 1. Total Tile */}
           <button
             type="button"
@@ -170,7 +170,7 @@ export function ChecklistPanel({
 
         {/* Progress Bar */}
         {totalCount > 0 && (
-          <div className="w-full bg-zinc-200 rounded-full h-1.5 overflow-hidden mb-2">
+          <div className="w-full bg-zinc-200 rounded-full h-1.5 overflow-hidden">
             <div
               className="bg-emerald-600 h-1.5 rounded-full transition-all duration-300"
               style={{ width: `${progressPercentage}%` }}
@@ -179,7 +179,7 @@ export function ChecklistPanel({
         )}
 
         {/* Honesty Disclaimer Banner with Unified Status Vocabulary */}
-        <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-zinc-50 border border-zinc-200/80 text-[11px] text-zinc-500 leading-relaxed font-sans my-2">
+        <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-zinc-50 border border-zinc-200/80 text-[11px] text-zinc-500 leading-relaxed font-sans">
           <Info className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
           <span>
             <strong>Deterministic Evidence:</strong> <em>Source Matched</em> confirms verbatim quote exists. Always review items marked <em>Needs Review</em> before submission.
@@ -189,9 +189,9 @@ export function ChecklistPanel({
 
       {/* Filter Toolbar with Standardized Vocabulary and Dynamic Item Counts */}
       {totalCount > 0 && (
-        <div className="px-4 py-2 border-b border-zinc-200 bg-white flex flex-col gap-1.5 overflow-hidden">
+        <div className="px-4 py-2.5 border-b border-zinc-200 bg-white flex flex-col gap-2 shrink-0">
           {/* Category Filter Row (Single Row with Horizontal Scroll) */}
-          <div className="flex items-center gap-1.5 overflow-x-auto py-0.5 no-scrollbar">
+          <div className="flex items-center gap-1.5 overflow-x-auto py-0.5 no-scrollbar shrink-0">
             <span className="text-[10px] font-mono uppercase text-zinc-400 mr-0.5 shrink-0">Types:</span>
             <button
               type="button"
@@ -240,7 +240,7 @@ export function ChecklistPanel({
           </div>
 
           {/* Status Filter Row (Single Row with Horizontal Scroll) */}
-          <div className="flex items-center gap-1.5 pt-1.5 border-t border-zinc-100 overflow-x-auto py-0.5 no-scrollbar">
+          <div className="flex items-center gap-1.5 pt-1.5 border-t border-zinc-100 overflow-x-auto py-0.5 no-scrollbar shrink-0">
             <span className="text-[10px] font-mono uppercase text-zinc-400 mr-0.5 shrink-0">Status:</span>
             <button
               type="button"
@@ -291,7 +291,7 @@ export function ChecklistPanel({
       )}
 
       {/* Checklist Cards Feed */}
-      <div className="flex-1 p-4 sm:p-5 pb-32 overflow-y-auto space-y-3 min-h-[360px]">
+      <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-5 pt-3 pb-32 space-y-3">
         {isLoading ? (
           /* Loading Skeletons */
           <div className="space-y-3">
