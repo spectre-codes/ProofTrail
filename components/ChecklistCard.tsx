@@ -68,19 +68,19 @@ export function ChecklistCard({
     switch (category) {
       case 'deliverable':
         return (
-          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold uppercase tracking-wider bg-slate-100 text-slate-800 border border-slate-300">
+          <span className="px-2 py-0.5 rounded text-[11px] font-mono font-semibold uppercase tracking-wider bg-zinc-100 text-zinc-800 border border-zinc-300">
             Deliverable
           </span>
         );
       case 'deadline':
         return (
-          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold uppercase tracking-wider bg-purple-100 text-purple-900 border border-purple-300">
+          <span className="px-2 py-0.5 rounded text-[11px] font-mono font-semibold uppercase tracking-wider bg-purple-100 text-purple-900 border border-purple-300">
             Deadline
           </span>
         );
       case 'rule':
         return (
-          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold uppercase tracking-wider bg-slate-200 text-slate-800 border border-slate-300">
+          <span className="px-2 py-0.5 rounded text-[11px] font-mono font-semibold uppercase tracking-wider bg-zinc-200 text-zinc-800 border border-zinc-300">
             Rule
           </span>
         );
@@ -110,7 +110,7 @@ export function ChecklistCard({
     }
 
     return (
-      <span className="text-slate-600 font-mono text-[11px]">
+      <span className="text-zinc-600 font-mono text-[11px]">
         Found {item.occurrenceCount} occurrence{item.occurrenceCount > 1 ? 's' : ''} · Exact match (normalized)
       </span>
     );
@@ -119,25 +119,25 @@ export function ChecklistCard({
   return (
     <div
       onClick={!isUnverified ? onSelect : undefined}
-      className={`group rounded-xl border border-slate-200 border-l-4 p-4 transition-all duration-150 overflow-visible h-auto ${getBorderAccent()} ${
+      className={`group rounded-xl border border-zinc-200 border-l-4 p-4 transition-all duration-150 overflow-visible h-auto ${getBorderAccent()} ${
         isActive
-          ? 'ring-2 ring-slate-900 ring-offset-2 shadow-md'
+          ? 'ring-2 ring-zinc-900 ring-offset-2 shadow-md'
           : 'hover:shadow-sm'
       }`}
     >
-      <div className="flex flex-col gap-2.5 h-auto overflow-visible">
+      <div className="flex flex-col gap-3 h-auto overflow-visible">
         {/* Header Row: Index, Category, Status Badge & Top-Right View Source Action */}
         <div className="flex items-center justify-between gap-2 flex-wrap">
           <div className="flex items-center gap-1.5 flex-wrap">
             {/* Item Index Badge */}
-            <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-100 text-slate-600 border border-slate-200">
+            <span className="px-1.5 py-0.5 rounded text-[11px] font-mono font-bold uppercase tracking-wider bg-zinc-100 text-zinc-600 border border-zinc-200">
               #{index + 1}
             </span>
             {getCategoryBadge(item.category)}
             {getStatusBadge(item.status)}
             {item.occurrenceCount > 1 && (
               <span
-                className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-100 text-slate-700 border border-slate-300"
+                className="px-2 py-0.5 rounded text-[11px] font-mono font-bold uppercase tracking-wider bg-zinc-100 text-zinc-700 border border-zinc-300"
                 title="Quote occurs multiple times in source text"
               >
                 {item.occurrenceCount}× in Source
@@ -156,8 +156,8 @@ export function ChecklistCard({
                 }}
                 className={`inline-flex items-center gap-1 text-[11px] font-mono font-semibold px-2 py-0.5 rounded-md border transition-all ${
                   isActive
-                    ? 'bg-slate-900 text-white border-slate-900 shadow-2xs'
-                    : 'bg-white text-slate-700 hover:text-emerald-700 hover:border-emerald-300 border-slate-200'
+                    ? 'bg-zinc-900 text-white border-zinc-900 shadow-2xs'
+                    : 'bg-white text-zinc-700 hover:text-zinc-950 hover:border-zinc-400 border-zinc-200'
                 }`}
                 title="Locate and focus this quote in the source document panel"
               >
@@ -170,8 +170,8 @@ export function ChecklistCard({
 
         {/* Action Title */}
         <h4
-          className={`text-[15px] font-semibold text-slate-900 leading-snug transition-all ${
-            item.completed ? 'line-through text-slate-400' : ''
+          className={`text-[15px] font-semibold text-zinc-900 leading-snug transition-all ${
+            item.completed ? 'line-through text-zinc-400' : ''
           }`}
         >
           {item.title}
@@ -179,9 +179,9 @@ export function ChecklistCard({
 
         {/* Monospace Verbatim Quote Box */}
         {item.verbatimQuote && (
-          <div className="rounded border border-slate-200 bg-slate-50/80 p-2.5 my-2 font-mono text-xs text-slate-700 leading-relaxed group-hover:bg-slate-100/70 transition-colors">
+          <div className="rounded border border-zinc-200 bg-zinc-50/80 p-3 my-2 font-mono text-xs text-zinc-700 leading-relaxed group-hover:bg-zinc-100/70 transition-colors">
             <div className="flex items-start gap-2">
-              <Quote className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+              <Quote className="w-3.5 h-3.5 text-zinc-400 shrink-0 mt-0.5" />
               <span className="line-clamp-3 select-all">
                 &ldquo;{item.verbatimQuote}&rdquo;
               </span>
@@ -219,7 +219,7 @@ export function ChecklistCard({
         )}
 
         {/* Card Footer Row: Match Telemetry on Left, Mark Complete Checkbox on Right */}
-        <div className="mt-1 pt-2.5 border-t border-slate-200/80 flex items-center justify-between gap-3">
+        <div className="mt-1 pt-2.5 border-t border-zinc-200/80 flex items-center justify-between gap-3">
           <div className="truncate mr-2">
             {renderMatchTelemetry()}
           </div>
@@ -230,17 +230,17 @@ export function ChecklistCard({
               e.stopPropagation();
               onToggleComplete();
             }}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition-colors shrink-0"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 border border-zinc-200 transition-colors shrink-0"
             title={item.completed ? 'Mark pending' : 'Mark completed'}
           >
             {item.completed ? (
               <>
                 <CheckSquare className="w-4 h-4 text-emerald-700 fill-emerald-100" />
-                <span className="line-through text-slate-400">Completed</span>
+                <span className="line-through text-zinc-400">Completed</span>
               </>
             ) : (
               <>
-                <Square className="w-4 h-4 text-slate-400" />
+                <Square className="w-4 h-4 text-zinc-400" />
                 <span>Mark complete</span>
               </>
             )}

@@ -145,7 +145,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-100 font-sans text-slate-900">
+    <div className="min-h-screen flex flex-col bg-zinc-100 font-sans text-zinc-900">
       <Navbar
         isSampleMode={isSampleMode}
         onReset={handleReset}
