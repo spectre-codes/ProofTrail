@@ -1,7 +1,7 @@
 import type { RawExtractedItem, ChecklistItem } from './verifyQuote.ts';
 import { verifyItems } from './verifyQuote.ts';
 
-export const SAMPLE_BRIEF_TEXT = `BUILD WITH AI: BASICS HACKATHON — OFFICIAL BRIEF & GUIDELINES
+export const SAMPLE_BRIEF_TEXT = `BUILD WITH AI: BASICS HACKATHON — ILLUSTRATIVE HACKATHON BRIEF — SAMPLE PROJECT GUIDELINES (DEMO FIXTURE)
 
 Welcome builders! The goal of this challenge is to build a proof-of-concept AI application that solves a real workflow problem using plan-first agentic development.
 

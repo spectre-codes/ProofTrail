@@ -9,6 +9,7 @@ import {
   AlertTriangle,
   XCircle,
   Info,
+  Hash,
 } from 'lucide-react';
 
 interface ChecklistPanelProps {
@@ -42,6 +43,10 @@ export function ChecklistPanel({
   const ambiguousCount = items.filter((i) => i.status === 'AMBIGUOUS').length;
   const unverifiedCount = items.filter((i) => i.status === 'UNVERIFIED').length;
 
+  const deliverablesCount = items.filter((i) => i.category === 'deliverable').length;
+  const deadlinesCount = items.filter((i) => i.category === 'deadline').length;
+  const rulesCount = items.filter((i) => i.category === 'rule').length;
+
   const progressPercentage = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
   // Filter items
@@ -69,50 +74,98 @@ export function ChecklistPanel({
           )}
         </div>
 
-        {/* 4-Column Monospace Evidence Telemetry Strip */}
+        {/* 4 Interactive Summary Metric Tiles */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
-          {/* 1. Total Extracted */}
-          <div className="p-2.5 rounded-lg bg-white border border-slate-200/80 shadow-2xs">
-            <div className="text-[10px] font-mono text-slate-500 uppercase tracking-wider">
-              Total Extracted
+          {/* 1. Total Tile */}
+          <button
+            type="button"
+            onClick={() => setFilterStatus('all')}
+            className={`text-left p-2.5 rounded-lg border transition-all cursor-pointer ${
+              filterStatus === 'all'
+                ? 'bg-slate-900 text-white border-slate-900 shadow-sm ring-2 ring-slate-900/20'
+                : 'bg-white text-slate-900 border-slate-200/90 hover:border-slate-300 hover:bg-slate-50'
+            }`}
+            title="Click to view all items"
+          >
+            <div className={`text-[10px] font-mono uppercase tracking-wider font-semibold ${filterStatus === 'all' ? 'text-slate-300' : 'text-slate-500'}`}>
+              Total
             </div>
-            <div className="text-lg font-mono font-bold text-slate-900 mt-0.5">
+            <div className="text-lg font-mono font-bold mt-0.5">
               {totalCount}
             </div>
-          </div>
-
-          {/* 2. Source Matched (Verified) */}
-          <div className="p-2.5 rounded-lg bg-emerald-50/60 border border-emerald-200 shadow-2xs">
-            <div className="flex items-center gap-1 text-[10px] font-mono text-emerald-800 uppercase tracking-wider font-semibold">
-              <ShieldCheck className="w-3 h-3 text-emerald-600" />
-              <span>Matched</span>
+            <div className={`text-[9px] font-mono truncate ${filterStatus === 'all' ? 'text-slate-400' : 'text-slate-400'}`}>
+              extracted items
             </div>
-            <div className="text-lg font-mono font-bold text-emerald-900 mt-0.5">
+          </button>
+
+          {/* 2. Source Matched Tile */}
+          <button
+            type="button"
+            onClick={() => setFilterStatus('VERIFIED')}
+            className={`text-left p-2.5 rounded-lg border transition-all cursor-pointer ${
+              filterStatus === 'VERIFIED'
+                ? 'bg-emerald-800 text-white border-emerald-900 shadow-sm ring-2 ring-emerald-600/30'
+                : 'bg-emerald-50/70 text-emerald-950 border-emerald-200 hover:border-emerald-300 hover:bg-emerald-100/50'
+            }`}
+            title="Click to filter to Source Matched items"
+          >
+            <div className={`flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider font-semibold ${filterStatus === 'VERIFIED' ? 'text-emerald-100' : 'text-emerald-800'}`}>
+              <ShieldCheck className="w-3 h-3 text-emerald-500" />
+              <span>Source Matched</span>
+            </div>
+            <div className="text-lg font-mono font-bold mt-0.5">
               {verifiedCount}
             </div>
-          </div>
-
-          {/* 3. Ambiguous / Review */}
-          <div className="p-2.5 rounded-lg bg-amber-50/70 border border-amber-200 shadow-2xs">
-            <div className="flex items-center gap-1 text-[10px] font-mono text-amber-800 uppercase tracking-wider font-semibold">
-              <AlertTriangle className="w-3 h-3 text-amber-600" />
-              <span>Ambiguous</span>
+            <div className={`text-[9px] font-mono truncate ${filterStatus === 'VERIFIED' ? 'text-emerald-200' : 'text-emerald-700/80'}`}>
+              verified quotations
             </div>
-            <div className="text-lg font-mono font-bold text-amber-950 mt-0.5">
+          </button>
+
+          {/* 3. Needs Review Tile */}
+          <button
+            type="button"
+            onClick={() => setFilterStatus('AMBIGUOUS')}
+            className={`text-left p-2.5 rounded-lg border transition-all cursor-pointer ${
+              filterStatus === 'AMBIGUOUS'
+                ? 'bg-amber-800 text-white border-amber-900 shadow-sm ring-2 ring-amber-600/30'
+                : 'bg-amber-50/70 text-amber-950 border-amber-200 hover:border-amber-300 hover:bg-amber-100/50'
+            }`}
+            title="Click to filter to Needs Review items"
+          >
+            <div className={`flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider font-semibold ${filterStatus === 'AMBIGUOUS' ? 'text-amber-100' : 'text-amber-800'}`}>
+              <AlertTriangle className="w-3 h-3 text-amber-500" />
+              <span>Needs Review</span>
+            </div>
+            <div className="text-lg font-mono font-bold mt-0.5">
               {ambiguousCount}
             </div>
-          </div>
-
-          {/* 4. Unmatched / Hallucination Caught */}
-          <div className="p-2.5 rounded-lg bg-rose-50/70 border border-rose-200 shadow-2xs">
-            <div className="flex items-center gap-1 text-[10px] font-mono text-rose-800 uppercase tracking-wider font-semibold">
-              <XCircle className="w-3 h-3 text-rose-600" />
-              <span>Unmatched</span>
+            <div className={`text-[9px] font-mono truncate ${filterStatus === 'AMBIGUOUS' ? 'text-amber-200' : 'text-amber-700/80'}`}>
+              ambiguous / unclear
             </div>
-            <div className="text-lg font-mono font-bold text-rose-950 mt-0.5">
+          </button>
+
+          {/* 4. No Source Match Tile */}
+          <button
+            type="button"
+            onClick={() => setFilterStatus('UNVERIFIED')}
+            className={`text-left p-2.5 rounded-lg border transition-all cursor-pointer ${
+              filterStatus === 'UNVERIFIED'
+                ? 'bg-rose-800 text-white border-rose-900 shadow-sm ring-2 ring-rose-600/30'
+                : 'bg-rose-50/70 text-rose-950 border-rose-200 hover:border-rose-300 hover:bg-rose-100/50'
+            }`}
+            title="Click to filter to No Source Match items"
+          >
+            <div className={`flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider font-semibold ${filterStatus === 'UNVERIFIED' ? 'text-rose-100' : 'text-rose-800'}`}>
+              <XCircle className="w-3 h-3 text-rose-500" />
+              <span>No Source Match</span>
+            </div>
+            <div className="text-lg font-mono font-bold mt-0.5">
               {unverifiedCount}
             </div>
-          </div>
+            <div className={`text-[9px] font-mono truncate ${filterStatus === 'UNVERIFIED' ? 'text-rose-200' : 'text-rose-700/80'}`}>
+              not found in source
+            </div>
+          </button>
         </div>
 
         {/* Progress Bar */}
@@ -125,56 +178,115 @@ export function ChecklistPanel({
           </div>
         )}
 
-        {/* Honesty Disclaimer Banner */}
-        <div className="flex items-start gap-2 p-2 rounded-lg bg-slate-100/90 border border-slate-200 text-[11px] text-slate-600 leading-relaxed font-sans">
+        {/* Honesty Disclaimer Banner with Unified Status Vocabulary */}
+        <div className="flex items-start gap-2 p-2.5 rounded-lg bg-slate-100/90 border border-slate-200 text-[11px] text-slate-700 leading-relaxed font-sans">
           <Info className="w-3.5 h-3.5 text-slate-500 shrink-0 mt-0.5" />
           <span>
-            <strong>Deterministic Evidence:</strong> Source Match confirms the verbatim quote exists in your text. Always review ambiguous details and full context before submission.
+            <strong>Deterministic Evidence:</strong> <em>Source Matched</em> confirms the verbatim quote exists in your text. Always review items marked <em>Needs Review</em> and full context before submission.
           </span>
         </div>
       </div>
 
-      {/* Filter Toolbar */}
+      {/* Filter Toolbar with Standardized Vocabulary and Dynamic Item Counts */}
       {totalCount > 0 && (
-        <div className="px-5 py-2.5 border-b border-slate-200 bg-white flex flex-wrap items-center gap-2">
-          <div className="flex items-center gap-1 text-slate-400 mr-1 text-xs font-mono">
-            <Filter className="w-3.5 h-3.5" />
-            <span>Filter:</span>
+        <div className="px-5 py-2.5 border-b border-slate-200 bg-white flex flex-col gap-2">
+          {/* Category Filter Row */}
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-[10px] font-mono uppercase text-slate-400 mr-1">Types:</span>
+            <button
+              type="button"
+              onClick={() => setFilterCategory('all')}
+              className={`px-2 py-0.5 rounded text-xs font-mono transition-all ${
+                filterCategory === 'all'
+                  ? 'bg-slate-900 text-white font-semibold'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              All ({totalCount})
+            </button>
+            <button
+              type="button"
+              onClick={() => setFilterCategory('deliverable')}
+              className={`px-2 py-0.5 rounded text-xs font-mono transition-all ${
+                filterCategory === 'deliverable'
+                  ? 'bg-slate-900 text-white font-semibold'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              Deliverables ({deliverablesCount})
+            </button>
+            <button
+              type="button"
+              onClick={() => setFilterCategory('deadline')}
+              className={`px-2 py-0.5 rounded text-xs font-mono transition-all ${
+                filterCategory === 'deadline'
+                  ? 'bg-slate-900 text-white font-semibold'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              Deadlines ({deadlinesCount})
+            </button>
+            <button
+              type="button"
+              onClick={() => setFilterCategory('rule')}
+              className={`px-2 py-0.5 rounded text-xs font-mono transition-all ${
+                filterCategory === 'rule'
+                  ? 'bg-slate-900 text-white font-semibold'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              Rules ({rulesCount})
+            </button>
           </div>
 
-          {/* Category Filter Pills */}
-          {(['all', 'deliverable', 'deadline', 'rule'] as const).map((cat) => (
+          {/* Status Filter Row */}
+          <div className="flex flex-wrap items-center gap-1.5 pt-1.5 border-t border-slate-100">
+            <span className="text-[10px] font-mono uppercase text-slate-400 mr-1">Status:</span>
             <button
-              key={cat}
               type="button"
-              onClick={() => setFilterCategory(cat)}
-              className={`px-2.5 py-1 rounded-md text-xs font-mono font-medium capitalize transition-all ${
-                filterCategory === cat
-                  ? 'bg-slate-900 text-white shadow-2xs'
+              onClick={() => setFilterStatus('all')}
+              className={`px-2 py-0.5 rounded text-xs font-mono transition-all ${
+                filterStatus === 'all'
+                  ? 'bg-slate-900 text-white font-semibold'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
-              {cat === 'all' ? 'All Types' : `${cat}s`}
+              All ({totalCount})
             </button>
-          ))}
-
-          <span className="w-px h-4 bg-slate-200 mx-1 hidden sm:block" />
-
-          {/* Status Filter Pills */}
-          {(['all', 'VERIFIED', 'AMBIGUOUS', 'UNVERIFIED'] as const).map((st) => (
             <button
-              key={st}
               type="button"
-              onClick={() => setFilterStatus(st)}
-              className={`px-2.5 py-1 rounded-md text-xs font-mono font-medium transition-all ${
-                filterStatus === st
-                  ? 'bg-emerald-800 text-white shadow-2xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              onClick={() => setFilterStatus('VERIFIED')}
+              className={`px-2 py-0.5 rounded text-xs font-mono transition-all ${
+                filterStatus === 'VERIFIED'
+                  ? 'bg-emerald-800 text-white font-semibold'
+                  : 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200/60'
               }`}
             >
-              {st === 'all' ? 'All Statuses' : st}
+              Source Matched ({verifiedCount})
             </button>
-          ))}
+            <button
+              type="button"
+              onClick={() => setFilterStatus('AMBIGUOUS')}
+              className={`px-2 py-0.5 rounded text-xs font-mono transition-all ${
+                filterStatus === 'AMBIGUOUS'
+                  ? 'bg-amber-800 text-white font-semibold'
+                  : 'bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200/60'
+              }`}
+            >
+              Needs Review ({ambiguousCount})
+            </button>
+            <button
+              type="button"
+              onClick={() => setFilterStatus('UNVERIFIED')}
+              className={`px-2 py-0.5 rounded text-xs font-mono transition-all ${
+                filterStatus === 'UNVERIFIED'
+                  ? 'bg-rose-800 text-white font-semibold'
+                  : 'bg-rose-50 text-rose-800 hover:bg-rose-100 border border-rose-200/60'
+              }`}
+            >
+              No Source Match ({unverifiedCount})
+            </button>
+          </div>
         </div>
       )}
 
@@ -215,20 +327,21 @@ export function ChecklistPanel({
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-mono font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 transition-colors shadow-2xs"
             >
               <Sparkles className="w-4 h-4 text-emerald-600" />
-              <span>Load Hackathon Sample Brief</span>
+              <span>Load Sample Brief (Fixture)</span>
             </button>
           </div>
         ) : filteredItems.length === 0 ? (
           /* No filter match */
           <div className="text-center py-12 text-slate-400 text-xs font-mono">
-            No checklist items match the selected filter.
+            No requirements match the active filter criteria.
           </div>
         ) : (
-          /* Render Checklist Cards */
-          filteredItems.map((item) => (
+          /* Render Checklist Cards with Index */
+          filteredItems.map((item, idx) => (
             <ChecklistCard
               key={item.id}
               item={item}
+              index={idx}
               isActive={item.id === activeItemId}
               onSelect={() => onSelectCard(item.id)}
               onToggleComplete={() => onToggleComplete(item.id)}
