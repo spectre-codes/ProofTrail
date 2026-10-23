@@ -9,7 +9,7 @@ Build mode: fast
 
 ## Slices
 
-- [ ] **1. Bootstrap Next.js app & deterministic verification engine with unit tests**
+- [x] **1. Bootstrap Next.js app & deterministic verification engine with unit tests**
   Becomes usable: The Next.js project is scaffolded with TypeScript, Tailwind CSS, and Lucide icons, and the core deterministic verification engine `lib/verifyQuote.ts` is implemented and verified by automated unit tests.
   Why now: Proves the unique kernel (deterministic quote verification, smart-quote/whitespace normalization, and three-tier classification) early and establishes the project skeleton so all subsequent UI and API slices have verified logic to build upon.
   PRD ref: `prd.md > Features and Behavior > 2. Structured Extraction & Deterministic Verification`, `prd.md > Product Decisions`
@@ -19,7 +19,7 @@ Build mode: fast
   Learner check: Run `npm test` and inspect the test suite proving that quotes are deterministically checked and smart quotes/whitespace are normalized.
   Commit: `Initialize Next.js app and deterministic verification engine with unit tests`
 
-- [ ] **2. Sample brief data, offline demo mode, and Gemini API extraction route**
+- [x] **2. Sample brief data, offline demo mode, and Gemini API extraction route**
   Becomes usable: A functioning server route `app/api/analyze/route.ts` that accepts source text, calls Gemini 2.5 Flash with structured output schema when `GEMINI_API_KEY` is present, falls back gracefully to deterministic sample data when offline or key is missing, runs `lib/verifyQuote.ts` on the items, and returns verified checklist items.
   Why now: Proves the AI extraction and fallback pipeline before tying it to the complex interactive UI, guaranteeing that live demos never crash.
   PRD ref: `prd.md > The Core Journey` (steps 2-5), `prd.md > States and Boundaries > Sample / Demo Mode Fallback`
@@ -29,7 +29,7 @@ Build mode: fast
   Learner check: Test API endpoint directly or run verification curl to observe the structured, verified checklist payload.
   Commit: `Add Gemini API route with structured schema and offline demo fallback`
 
-- [ ] **3. Split-screen dashboard with live extraction, interactive cards, and quote highlighting**
+- [x] **3. Split-screen dashboard with live extraction, interactive cards, and quote highlighting**
   Becomes usable: Complete end-to-end user loop in the browser. User lands on the split-screen UI, can paste text or click "Load Sample Brief", clicks "Extract & Verify Checklist", sees loading skeleton, views verified cards with category and status badges, and clicks cards to highlight quotes in the source panel.
   Why now: Connects the user experience to the core kernel. The bidirectional "proof trail" (clicking cards to scroll and highlight source evidence) is the central visual "aha" moment of the app.
   PRD ref: `prd.md > The Core Journey` (steps 1-6), `prd.md > Screens and Layout`, `prd.md > Features and Behavior > 1, 2, 3`
@@ -39,7 +39,7 @@ Build mode: fast
   Learner check: Open `http://localhost:3000`, click "Load Sample Brief", click "Extract & Verify Checklist", and click a card to see the source text auto-scroll and highlight.
   Commit: `Implement split-screen dashboard with live extraction and quote highlighting`
 
-- [ ] **4. Progress tracking, localStorage persistence, and category/status filtering**
+- [x] **4. Progress tracking, localStorage persistence, and category/status filtering**
   Becomes usable: Full production-ready polish. Checkboxes toggle completion with instant progress bar calculation and strikethroughs, all state persists across page refreshes via `localStorage`, filter pills filter by category (`Deliverable`, `Deadline`, `Rule`) and status (`All`, `Verified`, `Ambiguous`), and a reset button allows clearing state.
   Why now: Delivers the complete proof-of-concept journey defined in the PRD, enabling a flawless 1-2 minute recording for hackathon submission.
   PRD ref: `prd.md > Features and Behavior > 4. Progress Tracking & Local Persistence`, `prd.md > Features and Behavior > 5. Filtering & Categorization`
@@ -71,4 +71,8 @@ Reflection: [offered/answered/declined/already covered — personal answer belon
 Activity mode: [live app and editor, explicit static fallback, focused alternative, prior practice, or recap]
 
 ## Revisions
+
+- Enabled `allowImportingTsExtensions: true` in `tsconfig.json` and explicit `.ts` paths — ensures unified import resolution between Node native test runner and Next.js webpack compiler.
+- Switched from external Google Fonts network fetch in `app/layout.tsx` to native system sans-serif stack — eliminates build-time network failures and ensures 100% offline demo resilience.
+- Configured `postcss.config.js` with ES module `export default` — aligns PostCSS with `"type": "module"` in `package.json`.
 
