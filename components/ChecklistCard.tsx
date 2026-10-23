@@ -119,13 +119,13 @@ export function ChecklistCard({
   return (
     <div
       onClick={!isUnverified ? onSelect : undefined}
-      className={`group rounded-xl border border-slate-200 border-l-4 p-4 transition-all duration-150 ${getBorderAccent()} ${
+      className={`group rounded-xl border border-slate-200 border-l-4 p-4 transition-all duration-150 overflow-visible h-auto ${getBorderAccent()} ${
         isActive
           ? 'ring-2 ring-slate-900 ring-offset-2 shadow-md'
           : 'hover:shadow-sm'
       }`}
     >
-      <div className="flex flex-col gap-2.5">
+      <div className="flex flex-col gap-2.5 h-auto overflow-visible">
         {/* Header Row: Index, Category, Status Badge & Top-Right View Source Action */}
         <div className="flex items-center justify-between gap-2 flex-wrap">
           <div className="flex items-center gap-1.5 flex-wrap">

@@ -93,7 +93,7 @@ export function ChecklistPanel({
             <div className="text-lg font-mono font-bold mt-0.5">
               {totalCount}
             </div>
-            <div className={`text-[9px] font-mono truncate ${filterStatus === 'all' ? 'text-slate-400' : 'text-slate-400'}`}>
+            <div className={`text-[11px] leading-tight font-mono whitespace-normal break-words mt-0.5 ${filterStatus === 'all' ? 'text-slate-300' : 'text-slate-500'}`}>
               extracted items
             </div>
           </button>
@@ -116,7 +116,7 @@ export function ChecklistPanel({
             <div className="text-lg font-mono font-bold mt-0.5">
               {verifiedCount}
             </div>
-            <div className={`text-[9px] font-mono truncate ${filterStatus === 'VERIFIED' ? 'text-emerald-200' : 'text-emerald-700/80'}`}>
+            <div className={`text-[11px] leading-tight font-mono whitespace-normal break-words mt-0.5 ${filterStatus === 'VERIFIED' ? 'text-emerald-200' : 'text-emerald-700/80'}`}>
               verified quotations
             </div>
           </button>
@@ -139,7 +139,7 @@ export function ChecklistPanel({
             <div className="text-lg font-mono font-bold mt-0.5">
               {ambiguousCount}
             </div>
-            <div className={`text-[9px] font-mono truncate ${filterStatus === 'AMBIGUOUS' ? 'text-amber-200' : 'text-amber-700/80'}`}>
+            <div className={`text-[11px] leading-tight font-mono whitespace-normal break-words mt-0.5 ${filterStatus === 'AMBIGUOUS' ? 'text-amber-200' : 'text-amber-700/80'}`}>
               ambiguous / unclear
             </div>
           </button>
@@ -162,7 +162,7 @@ export function ChecklistPanel({
             <div className="text-lg font-mono font-bold mt-0.5">
               {unverifiedCount}
             </div>
-            <div className={`text-[9px] font-mono truncate ${filterStatus === 'UNVERIFIED' ? 'text-rose-200' : 'text-rose-700/80'}`}>
+            <div className={`text-[11px] leading-tight font-mono whitespace-normal break-words mt-0.5 ${filterStatus === 'UNVERIFIED' ? 'text-rose-200' : 'text-rose-700/80'}`}>
               not found in source
             </div>
           </button>
@@ -291,7 +291,7 @@ export function ChecklistPanel({
       )}
 
       {/* Checklist Cards Feed */}
-      <div className="flex-1 p-4 sm:p-5 overflow-y-auto space-y-3 min-h-[360px]">
+      <div className="flex-1 p-4 sm:p-5 pb-32 overflow-y-auto space-y-3 min-h-[360px]">
         {isLoading ? (
           /* Loading Skeletons */
           <div className="space-y-3">
