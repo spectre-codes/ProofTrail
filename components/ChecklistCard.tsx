@@ -147,7 +147,7 @@ export function ChecklistCard({
 
           {/* Top-Right "View source ↗" Action */}
           <div>
-            {!isUnverified ? (
+            {!isUnverified && (
               <button
                 type="button"
                 onClick={(e) => {
@@ -164,17 +164,13 @@ export function ChecklistCard({
                 <span>View source</span>
                 <ExternalLink className="w-3 h-3" />
               </button>
-            ) : (
-              <span className="text-[10px] font-mono font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200">
-                Not in source
-              </span>
             )}
           </div>
         </div>
 
         {/* Action Title */}
         <h4
-          className={`text-sm font-semibold text-slate-900 leading-snug tracking-tight transition-all ${
+          className={`text-[15px] font-semibold text-slate-900 leading-snug transition-all ${
             item.completed ? 'line-through text-slate-400' : ''
           }`}
         >
@@ -183,7 +179,7 @@ export function ChecklistCard({
 
         {/* Monospace Verbatim Quote Box */}
         {item.verbatimQuote && (
-          <div className="rounded-lg border border-slate-200 bg-slate-50 p-2.5 font-mono text-xs text-slate-700 leading-relaxed group-hover:bg-slate-100/70 transition-colors">
+          <div className="rounded border border-slate-200 bg-slate-50/80 p-2.5 my-2 font-mono text-xs text-slate-700 leading-relaxed group-hover:bg-slate-100/70 transition-colors">
             <div className="flex items-start gap-2">
               <Quote className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
               <span className="line-clamp-3 select-all">

@@ -79,7 +79,7 @@ export function SourcePanel({
 
     if (matchedItems.length === 0) {
       return (
-        <div className="whitespace-pre-wrap font-sans text-slate-800 text-sm leading-relaxed p-2">
+        <div className="whitespace-pre-wrap font-sans text-slate-800 text-sm leading-[1.8] p-2">
           {sourceText}
         </div>
       );
@@ -123,7 +123,7 @@ export function SourcePanel({
     }
 
     return (
-      <div className="whitespace-pre-wrap font-sans text-slate-800 text-sm leading-relaxed p-2">
+      <div className="whitespace-pre-wrap font-sans text-slate-800 text-sm leading-[1.8] p-2">
         {segments.map((seg, idx) => {
           if (!seg.item) {
             return <span key={idx}>{seg.text}</span>;
@@ -132,17 +132,16 @@ export function SourcePanel({
           const isActive = seg.item.id === activeItemId;
           const isAmbiguous = seg.item.status === 'AMBIGUOUS';
 
-          // RED FLAG C FIX:
-          // Status color strictly preserved at all times:
-          // - VERIFIED is always Emerald
-          // - AMBIGUOUS is always Amber
-          // Active selection uses an unmistakable dark focus ring & offset, NEVER turning green into amber!
+          // Calibrated tint fills with crisp bottom borders:
+          // - VERIFIED is always Emerald tint
+          // - AMBIGUOUS is always Amber tint
+          // Active selection uses an unmistakable dark focus ring & offset, NEVER mutating the status color
           const statusBg = isAmbiguous
-            ? 'bg-amber-100/90 text-amber-950 border-b-2 border-amber-500'
-            : 'bg-emerald-100/90 text-emerald-950 border-b-2 border-emerald-500';
+            ? 'bg-amber-500/15 text-slate-900 border-b-2 border-amber-500/70'
+            : 'bg-emerald-500/15 text-slate-900 border-b-2 border-emerald-500/70';
 
           const activeRing = isActive
-            ? 'ring-2 ring-slate-900 ring-offset-2 shadow-sm font-semibold'
+            ? 'ring-2 ring-slate-900 ring-offset-1 font-semibold'
             : 'hover:brightness-95';
 
           return (
@@ -150,7 +149,7 @@ export function SourcePanel({
               key={idx}
               id={`quote-anchor-${seg.item.id}`}
               onClick={() => onSelectCard(seg.item!.id)}
-              className={`cursor-pointer px-1 py-0.5 rounded transition-all duration-150 ${statusBg} ${activeRing}`}
+              className={`cursor-pointer inline [box-decoration-break:clone] [-webkit-box-decoration-break:clone] px-1 py-0.5 rounded-sm transition-all duration-150 ${statusBg} ${activeRing}`}
               title={`Click to focus requirement: "${seg.item.title}" (${isAmbiguous ? 'Needs Review' : 'Source Matched'})`}
             >
               {seg.text}
@@ -213,11 +212,12 @@ export function SourcePanel({
             {isSample ? 'sample-brief.txt' : 'source-document.txt'}
           </span>
           {isSample ? (
-            <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-100/80 text-amber-900 border border-amber-300">
-              Illustrative Sample
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-mono bg-zinc-900/50 border border-zinc-700/60 text-zinc-300">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400/80 shrink-0" />
+              <span>Illustrative Sample</span>
             </span>
           ) : (
-            <span className="px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-slate-200 text-slate-700">
+            <span className="px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-slate-200 text-slate-700">
               Custom Document
             </span>
           )}
@@ -270,7 +270,7 @@ export function SourcePanel({
           type="button"
           onClick={onExtract}
           disabled={isLoading || !sourceText.trim()}
-          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-mono text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-emerald-700/20 transition-all hover:shadow-lg hover:shadow-emerald-700/30 active:scale-[0.98]"
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-mono text-xs font-medium text-white bg-zinc-950 hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm border border-zinc-800 transition-colors active:scale-[0.98]"
         >
           {isLoading ? (
             <>

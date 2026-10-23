@@ -36,19 +36,19 @@ export function Navbar({ isSampleMode, onReset, itemCount }: NavbarProps) {
           <div className="flex items-center gap-3 self-end sm:self-center shrink-0">
             {isSampleMode ? (
               <div
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-950/70 border border-amber-600/50 text-amber-300 font-mono text-xs font-medium shadow-2xs"
+                className="flex items-center gap-2 px-2.5 py-1 rounded-md bg-zinc-900/50 border border-zinc-700/60 text-zinc-300 font-mono text-[11px] font-medium shadow-2xs"
                 title="Running offline with sample candidate extractions verified through lib/verifyQuote.ts at runtime"
               >
-                <Database className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                <span className="tracking-wide">OFFLINE VERIFICATION SANDBOX (SAMPLE CANDIDATES)</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400/80 shrink-0" />
+                <span className="tracking-wide uppercase">Offline Sandbox (Sample Candidates)</span>
               </div>
             ) : (
               <div
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-950/70 border border-emerald-600/50 text-emerald-300 font-mono text-xs font-medium shadow-2xs"
+                className="flex items-center gap-2 px-2.5 py-1 rounded-md bg-zinc-900/50 border border-zinc-700/60 text-zinc-300 font-mono text-[11px] font-medium shadow-2xs"
                 title="Active live API integration with Gemini 2.5 Flash"
               >
-                <Cpu className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span className="tracking-wide">LIVE GEMINI 2.5 FLASH</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/80 shrink-0" />
+                <span className="tracking-wide uppercase">Live Gemini 2.5 Flash</span>
               </div>
             )}
 

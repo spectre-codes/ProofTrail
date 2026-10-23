@@ -59,8 +59,8 @@ export function ChecklistPanel({
   return (
     <div className="flex flex-col h-full bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
       {/* Panel Header */}
-      <div className="p-4 sm:p-5 border-b border-slate-200 bg-slate-50/80">
-        <div className="flex items-center justify-between mb-3">
+      <div className="p-3.5 sm:p-4 border-b border-slate-200 bg-slate-50/80">
+        <div className="flex items-center justify-between mb-2.5">
           <div className="flex items-center gap-2">
             <ListChecks className="w-5 h-5 text-emerald-600" />
             <h2 className="font-mono font-bold text-slate-900 text-sm tracking-tight">
@@ -75,26 +75,26 @@ export function ChecklistPanel({
         </div>
 
         {/* 4 Interactive Summary Metric Tiles */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2">
           {/* 1. Total Tile */}
           <button
             type="button"
             onClick={() => setFilterStatus('all')}
             className={`text-left p-2.5 rounded-lg border transition-all cursor-pointer ${
               filterStatus === 'all'
-                ? 'bg-slate-900 text-white border-slate-900 shadow-sm ring-2 ring-slate-900/20'
+                ? 'ring-2 ring-slate-900 bg-slate-50 border-slate-300 shadow-sm'
                 : 'bg-white text-slate-900 border-slate-200/90 hover:border-slate-300 hover:bg-slate-50'
             }`}
             title="Click to view all items"
           >
-            <div className={`text-[10px] font-mono uppercase tracking-wider font-semibold ${filterStatus === 'all' ? 'text-slate-300' : 'text-slate-500'}`}>
+            <div className="text-[10px] font-mono uppercase tracking-wider font-semibold text-slate-500">
               Total
             </div>
-            <div className="text-lg font-mono font-bold mt-0.5">
+            <div className="text-2xl font-mono font-semibold tabular-nums text-slate-900 mt-0.5">
               {totalCount}
             </div>
-            <div className={`text-[11px] leading-tight font-mono whitespace-normal break-words mt-0.5 ${filterStatus === 'all' ? 'text-slate-300' : 'text-slate-500'}`}>
-              extracted items
+            <div className="text-[11px] leading-tight font-mono text-slate-500 whitespace-nowrap mt-0.5">
+              Items
             </div>
           </button>
 
@@ -104,20 +104,20 @@ export function ChecklistPanel({
             onClick={() => setFilterStatus('VERIFIED')}
             className={`text-left p-2.5 rounded-lg border transition-all cursor-pointer ${
               filterStatus === 'VERIFIED'
-                ? 'bg-emerald-800 text-white border-emerald-900 shadow-sm ring-2 ring-emerald-600/30'
+                ? 'ring-2 ring-emerald-500 bg-emerald-50/60 border-emerald-300 shadow-sm'
                 : 'bg-emerald-50/70 text-emerald-950 border-emerald-200 hover:border-emerald-300 hover:bg-emerald-100/50'
             }`}
             title="Click to filter to Source Matched items"
           >
-            <div className={`flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider font-semibold ${filterStatus === 'VERIFIED' ? 'text-emerald-100' : 'text-emerald-800'}`}>
-              <ShieldCheck className="w-3 h-3 text-emerald-500" />
+            <div className="flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider font-semibold text-emerald-800">
+              <ShieldCheck className="w-3 h-3 text-emerald-600" />
               <span>Source Matched</span>
             </div>
-            <div className="text-lg font-mono font-bold mt-0.5">
+            <div className="text-2xl font-mono font-semibold tabular-nums text-emerald-950 mt-0.5">
               {verifiedCount}
             </div>
-            <div className={`text-[11px] leading-tight font-mono whitespace-normal break-words mt-0.5 ${filterStatus === 'VERIFIED' ? 'text-emerald-200' : 'text-emerald-700/80'}`}>
-              verified quotations
+            <div className="text-[11px] leading-tight font-mono text-emerald-700/80 whitespace-nowrap mt-0.5">
+              Verified
             </div>
           </button>
 
@@ -127,20 +127,20 @@ export function ChecklistPanel({
             onClick={() => setFilterStatus('AMBIGUOUS')}
             className={`text-left p-2.5 rounded-lg border transition-all cursor-pointer ${
               filterStatus === 'AMBIGUOUS'
-                ? 'bg-amber-800 text-white border-amber-900 shadow-sm ring-2 ring-amber-600/30'
+                ? 'ring-2 ring-amber-500 bg-amber-50/60 border-amber-300 shadow-sm'
                 : 'bg-amber-50/70 text-amber-950 border-amber-200 hover:border-amber-300 hover:bg-amber-100/50'
             }`}
             title="Click to filter to Needs Review items"
           >
-            <div className={`flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider font-semibold ${filterStatus === 'AMBIGUOUS' ? 'text-amber-100' : 'text-amber-800'}`}>
-              <AlertTriangle className="w-3 h-3 text-amber-500" />
+            <div className="flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider font-semibold text-amber-800">
+              <AlertTriangle className="w-3 h-3 text-amber-600" />
               <span>Needs Review</span>
             </div>
-            <div className="text-lg font-mono font-bold mt-0.5">
+            <div className="text-2xl font-mono font-semibold tabular-nums text-amber-950 mt-0.5">
               {ambiguousCount}
             </div>
-            <div className={`text-[11px] leading-tight font-mono whitespace-normal break-words mt-0.5 ${filterStatus === 'AMBIGUOUS' ? 'text-amber-200' : 'text-amber-700/80'}`}>
-              ambiguous / unclear
+            <div className="text-[11px] leading-tight font-mono text-amber-700/80 whitespace-nowrap mt-0.5">
+              Review
             </div>
           </button>
 
@@ -150,27 +150,27 @@ export function ChecklistPanel({
             onClick={() => setFilterStatus('UNVERIFIED')}
             className={`text-left p-2.5 rounded-lg border transition-all cursor-pointer ${
               filterStatus === 'UNVERIFIED'
-                ? 'bg-rose-800 text-white border-rose-900 shadow-sm ring-2 ring-rose-600/30'
+                ? 'ring-2 ring-rose-500 bg-rose-50/60 border-rose-300 shadow-sm'
                 : 'bg-rose-50/70 text-rose-950 border-rose-200 hover:border-rose-300 hover:bg-rose-100/50'
             }`}
             title="Click to filter to No Source Match items"
           >
-            <div className={`flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider font-semibold ${filterStatus === 'UNVERIFIED' ? 'text-rose-100' : 'text-rose-800'}`}>
-              <XCircle className="w-3 h-3 text-rose-500" />
-              <span>No Source Match</span>
+            <div className="flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider font-semibold text-rose-800">
+              <XCircle className="w-3 h-3 text-rose-600" />
+              <span>No Match</span>
             </div>
-            <div className="text-lg font-mono font-bold mt-0.5">
+            <div className="text-2xl font-mono font-semibold tabular-nums text-rose-950 mt-0.5">
               {unverifiedCount}
             </div>
-            <div className={`text-[11px] leading-tight font-mono whitespace-normal break-words mt-0.5 ${filterStatus === 'UNVERIFIED' ? 'text-rose-200' : 'text-rose-700/80'}`}>
-              not found in source
+            <div className="text-[11px] leading-tight font-mono text-rose-700/80 whitespace-nowrap mt-0.5">
+              Flagged
             </div>
           </button>
         </div>
 
         {/* Progress Bar */}
         {totalCount > 0 && (
-          <div className="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden mb-3">
+          <div className="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden mb-2">
             <div
               className="bg-emerald-600 h-1.5 rounded-full transition-all duration-300"
               style={{ width: `${progressPercentage}%` }}
@@ -179,24 +179,24 @@ export function ChecklistPanel({
         )}
 
         {/* Honesty Disclaimer Banner with Unified Status Vocabulary */}
-        <div className="flex items-start gap-2 p-2.5 rounded-lg bg-slate-100/90 border border-slate-200 text-[11px] text-slate-700 leading-relaxed font-sans">
-          <Info className="w-3.5 h-3.5 text-slate-500 shrink-0 mt-0.5" />
+        <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-slate-50 border border-slate-200/80 text-[11px] text-slate-500 leading-relaxed font-sans my-2">
+          <Info className="w-3.5 h-3.5 text-slate-400 shrink-0" />
           <span>
-            <strong>Deterministic Evidence:</strong> <em>Source Matched</em> confirms the verbatim quote exists in your text. Always review items marked <em>Needs Review</em> and full context before submission.
+            <strong>Deterministic Evidence:</strong> <em>Source Matched</em> confirms verbatim quote exists. Always review items marked <em>Needs Review</em> before submission.
           </span>
         </div>
       </div>
 
       {/* Filter Toolbar with Standardized Vocabulary and Dynamic Item Counts */}
       {totalCount > 0 && (
-        <div className="px-5 py-2.5 border-b border-slate-200 bg-white flex flex-col gap-2">
+        <div className="px-5 py-2 border-b border-slate-200 bg-white flex flex-col gap-1.5">
           {/* Category Filter Row */}
-          <div className="flex flex-wrap items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-1">
             <span className="text-[10px] font-mono uppercase text-slate-400 mr-1">Types:</span>
             <button
               type="button"
               onClick={() => setFilterCategory('all')}
-              className={`px-2 py-0.5 rounded text-xs font-mono transition-all ${
+              className={`px-2 py-0.5 rounded-md text-[11px] font-mono transition-all ${
                 filterCategory === 'all'
                   ? 'bg-slate-900 text-white font-semibold'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -207,7 +207,7 @@ export function ChecklistPanel({
             <button
               type="button"
               onClick={() => setFilterCategory('deliverable')}
-              className={`px-2 py-0.5 rounded text-xs font-mono transition-all ${
+              className={`px-2 py-0.5 rounded-md text-[11px] font-mono transition-all ${
                 filterCategory === 'deliverable'
                   ? 'bg-slate-900 text-white font-semibold'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -218,7 +218,7 @@ export function ChecklistPanel({
             <button
               type="button"
               onClick={() => setFilterCategory('deadline')}
-              className={`px-2 py-0.5 rounded text-xs font-mono transition-all ${
+              className={`px-2 py-0.5 rounded-md text-[11px] font-mono transition-all ${
                 filterCategory === 'deadline'
                   ? 'bg-slate-900 text-white font-semibold'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -229,7 +229,7 @@ export function ChecklistPanel({
             <button
               type="button"
               onClick={() => setFilterCategory('rule')}
-              className={`px-2 py-0.5 rounded text-xs font-mono transition-all ${
+              className={`px-2 py-0.5 rounded-md text-[11px] font-mono transition-all ${
                 filterCategory === 'rule'
                   ? 'bg-slate-900 text-white font-semibold'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -240,12 +240,12 @@ export function ChecklistPanel({
           </div>
 
           {/* Status Filter Row */}
-          <div className="flex flex-wrap items-center gap-1.5 pt-1.5 border-t border-slate-100">
+          <div className="flex flex-wrap items-center gap-1 pt-1.5 border-t border-slate-100">
             <span className="text-[10px] font-mono uppercase text-slate-400 mr-1">Status:</span>
             <button
               type="button"
               onClick={() => setFilterStatus('all')}
-              className={`px-2 py-0.5 rounded text-xs font-mono transition-all ${
+              className={`px-2 py-0.5 rounded-md text-[11px] font-mono transition-all ${
                 filterStatus === 'all'
                   ? 'bg-slate-900 text-white font-semibold'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -256,7 +256,7 @@ export function ChecklistPanel({
             <button
               type="button"
               onClick={() => setFilterStatus('VERIFIED')}
-              className={`px-2 py-0.5 rounded text-xs font-mono transition-all ${
+              className={`px-2 py-0.5 rounded-md text-[11px] font-mono transition-all ${
                 filterStatus === 'VERIFIED'
                   ? 'bg-emerald-800 text-white font-semibold'
                   : 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200/60'
@@ -267,7 +267,7 @@ export function ChecklistPanel({
             <button
               type="button"
               onClick={() => setFilterStatus('AMBIGUOUS')}
-              className={`px-2 py-0.5 rounded text-xs font-mono transition-all ${
+              className={`px-2 py-0.5 rounded-md text-[11px] font-mono transition-all ${
                 filterStatus === 'AMBIGUOUS'
                   ? 'bg-amber-800 text-white font-semibold'
                   : 'bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200/60'
@@ -278,7 +278,7 @@ export function ChecklistPanel({
             <button
               type="button"
               onClick={() => setFilterStatus('UNVERIFIED')}
-              className={`px-2 py-0.5 rounded text-xs font-mono transition-all ${
+              className={`px-2 py-0.5 rounded-md text-[11px] font-mono transition-all ${
                 filterStatus === 'UNVERIFIED'
                   ? 'bg-rose-800 text-white font-semibold'
                   : 'bg-rose-50 text-rose-800 hover:bg-rose-100 border border-rose-200/60'
