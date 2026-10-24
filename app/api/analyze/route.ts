@@ -63,16 +63,18 @@ export async function POST(req: Request) {
 
     const apiKey = process.env.GEMINI_API_KEY?.trim();
 
+    // Helper to normalize collapsing whitespace and linebreaks for comparison
+    const normalizeWhitespace = (str: string) => str.trim().replace(/\s+/g, ' ');
+
     // OFFLINE VERIFICATION SANDBOX / DEMO MODE:
-    // If no API key is configured, execute RUNTIME deterministic verification
-    // on candidate items against the source text so the verification engine is genuinely tested.
+    // If no API key is configured, evaluate prepared sample candidates ONLY when the submitted text
+    // matches the built-in sample brief (after trimming and normalizing whitespace).
     if (!apiKey) {
       const isSampleBrief =
-        sourceText.includes('BUILD WITH AI: BASICS HACKATHON') ||
-        Math.abs(sourceText.length - SAMPLE_BRIEF_TEXT.trim().length) < 50;
+        normalizeWhitespace(sourceText) === normalizeWhitespace(SAMPLE_BRIEF_TEXT);
 
       if (isSampleBrief) {
-        // Run verifyItems at runtime against the actual submitted text!
+        // Run verifyItems at runtime against the submitted sample text
         const verifiedItems = verifyItems(sourceText, RAW_SAMPLE_CANDIDATE_ITEMS);
 
         return Response.json({
@@ -83,16 +85,15 @@ export async function POST(req: Request) {
         });
       }
 
-      // If user provided arbitrary custom text without an API key, run verification on sample candidates
-      // against their text (which demonstrates hallucination catching if text doesn't contain the quotes)
-      const verifiedItems = verifyItems(sourceText, RAW_SAMPLE_CANDIDATE_ITEMS);
-
-      return Response.json({
-        items: verifiedItems,
-        isSampleMode: true,
-        modelUsed: 'offline-verification-sandbox',
-        message: 'No GEMINI_API_KEY configured in .env.local. Running sample audit candidates through the verification engine against your text.',
-      });
+      // If user provided arbitrary custom text without an API key, return a clean 503 response
+      // explaining that the offline sandbox only evaluates the built-in Sample Brief fixture.
+      return Response.json(
+        {
+          error: 'Offline Verification Sandbox only evaluates the built-in Sample Brief fixture. Analyzing custom documents requires a GEMINI_API_KEY configured in .env.local. Click "Load Sample Brief" to test the offline verification engine.',
+          isSampleMode: true,
+        },
+        { status: 503 }
+      );
     }
 
     // LIVE GEMINI 2.5 FLASH EXTRACTION + RUNTIME VERIFICATION

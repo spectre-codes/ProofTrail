@@ -1,17 +1,23 @@
-# Personal learning context
-/devpost/learner-profile.md
-
 # Dependencies & build output
 node_modules/
 .next/
 out/
 build/
 
-# Local credential files
-.env
-.env.*
-!.env.example
-
 # OS files
 .DS_Store
 *.pem
+
+# Local environment files and secrets
+/.env
+/.env.*
+!/.env.example
+
+# Personal learner notes
+/devpost/learner-profile.md
+
+# Local AI agent tooling and skill installation metadata
+/.agents/
+/.claude/
+/agent/
+/skills-lock.json

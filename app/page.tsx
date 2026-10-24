@@ -64,11 +64,12 @@ export default function Home() {
     }
   }, [sourceText, items, isSampleMode, isHydrated]);
 
-  // Handle source text edits: clear stale active highlight when text changes
+  // Handle source text edits: immediately clear stale audit results, highlights & notices
   const handleSourceTextChange = useCallback((text: string) => {
     setSourceText(text);
-    // Clear stale active highlight anchor when source text is modified
     setActiveItemId(null);
+    setItems([]);
+    setErrorMessage(null);
   }, []);
 
   // Load sample brief handler
@@ -77,6 +78,7 @@ export default function Home() {
     setErrorMessage(null);
     setIsEditing(false);
     setActiveItemId(null);
+    setItems([]);
   }, []);
 
   // Extract & Verify Checklist handler
@@ -112,6 +114,8 @@ export default function Home() {
       }
     } catch (err: any) {
       console.error('Audit extraction error:', err);
+      setItems([]);
+      setActiveItemId(null);
       setErrorMessage(err.message || 'An unexpected error occurred while analyzing the brief.');
     } finally {
       setIsLoading(false);
