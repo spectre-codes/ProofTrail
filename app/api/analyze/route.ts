@@ -42,6 +42,9 @@ CRITICAL EVIDENCE RULES:
 2. If a deadline or rule is vague, missing a timezone, missing a specific calendar date (e.g. "submit by Friday"), or has an unspecified file/submission format, set "isAmbiguous" to true and provide a concise "ambiguityReason".
 3. Return only valid JSON conforming strictly to the requested schema.`;
 
+// Helper to normalize collapsing whitespace and linebreaks for text comparison
+const normalizeWhitespace = (str: string) => str.trim().replace(/\s+/g, ' ');
+
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
@@ -62,9 +65,6 @@ export async function POST(req: Request) {
     }
 
     const apiKey = process.env.GEMINI_API_KEY?.trim();
-
-    // Helper to normalize collapsing whitespace and linebreaks for comparison
-    const normalizeWhitespace = (str: string) => str.trim().replace(/\s+/g, ' ');
 
     // OFFLINE VERIFICATION SANDBOX / DEMO MODE:
     // If no API key is configured, evaluate prepared sample candidates ONLY when the submitted text
@@ -135,20 +135,20 @@ export async function POST(req: Request) {
     } catch (apiError: any) {
       console.error('Gemini API call error:', apiError);
 
-      // Graceful fallback for sample brief during demo presentations if API fails
-      if (sourceText.includes('BUILD WITH AI: BASICS HACKATHON')) {
+      // Graceful fallback for sample brief during demo presentations if live API fails
+      if (normalizeWhitespace(sourceText) === normalizeWhitespace(SAMPLE_BRIEF_TEXT)) {
         const verifiedItems = verifyItems(sourceText, RAW_SAMPLE_CANDIDATE_ITEMS);
         return Response.json({
           items: verifiedItems,
           isSampleMode: true,
           modelUsed: 'fallback-verification-sandbox',
-          error: apiError?.message || 'Gemini API call failed; loaded offline verification candidates.',
+          message: 'Gemini API call failed; loaded offline verification candidates.',
         });
       }
 
       return Response.json(
         {
-          error: `Gemini API error: ${apiError?.message || 'Failed to analyze text'}. Verify GEMINI_API_KEY in .env.local.`,
+          error: 'Gemini API analysis failed. Please verify your GEMINI_API_KEY in .env.local and try again.',
           isSampleMode: false,
         },
         { status: 502 }
@@ -157,7 +157,7 @@ export async function POST(req: Request) {
   } catch (err: any) {
     console.error('Server error in /api/analyze:', err);
     return Response.json(
-      { error: err.message || 'Internal server error' },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }

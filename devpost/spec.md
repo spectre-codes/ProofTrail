@@ -215,3 +215,8 @@ ai-basics-poc/
   - *Whitespace and smart-quote normalization:* The LLM might return standardized ASCII quotes while the user pasted text with typographic curly quotes, or different line wraps. `lib/verifyQuote.ts` applies regex normalization (`[\u201C\u201D] -> "`, `\s+ -> ' '`) before checking inclusion, preventing spurious `UNVERIFIED` flags on real quotes.
 - **Open Issues:** None blocking build.
 
+## Post-Build Revision Note
+- **UI Status Vocabulary Alignment:** Refined user-facing badge and filter vocabulary from internal enum codes (`VERIFIED / AMBIGUOUS / UNVERIFIED`) to intuitive forensic audit labels: `Source Matched`, `Needs Review`, and `No Source Match`.
+- **Offline Fallback Runtime Verification:** Upgraded offline demo mode from static precomputed items to live runtime verification: raw candidate extractions pass directly through `verifyItems()` in `lib/verifyQuote.ts` at request time against the submitted document, dynamically generating verified, ambiguous, and rejected test states.
+
+

@@ -57,3 +57,8 @@ Running `npm run dev` opens ProofTrail. Clicking "Load Sample Brief" populates t
 - **Database / Backend Storage:** Local browser storage (`localStorage`) is sufficient and zero-maintenance.
 - **Third-party integrations (Trello/Notion):** Focus stays strictly on requirements extraction and deterministic verification.
 
+## Post-Build Revision Note
+- **UI Status Vocabulary Alignment:** Refined user-facing badge and filter vocabulary from internal enum codes (`VERIFIED / AMBIGUOUS / UNVERIFIED`) to intuitive forensic audit labels: `Source Matched`, `Needs Review`, and `No Source Match`.
+- **Offline Fallback Runtime Verification:** Upgraded offline demo mode from static precomputed items to live runtime verification: raw candidate extractions pass directly through `verifyItems()` in `lib/verifyQuote.ts` at request time against the submitted document, dynamically generating verified, ambiguous, and rejected test states.
+
+

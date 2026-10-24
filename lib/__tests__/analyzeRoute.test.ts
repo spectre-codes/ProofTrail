@@ -88,4 +88,24 @@ describe('API Route /api/analyze mechanical verification', () => {
 
     if (oldKey) process.env.GEMINI_API_KEY = oldKey;
   });
+
+  it('does NOT return prepared sample candidates when custom text contains "BUILD WITH AI: BASICS HACKATHON" substring but is modified', async () => {
+    const oldKey = process.env.GEMINI_API_KEY;
+    delete process.env.GEMINI_API_KEY;
+
+    const modifiedText = 'BUILD WITH AI: BASICS HACKATHON — But this is modified custom text with altered rules.';
+    const req = new Request('http://localhost:3000/api/analyze', {
+      method: 'POST',
+      body: JSON.stringify({ text: modifiedText }),
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const res = await POST(req);
+    assert.strictEqual(res.status, 503);
+    const data = await res.json();
+    assert.ok(data.error.includes('GEMINI_API_KEY'));
+    assert.strictEqual(data.items, undefined);
+
+    if (oldKey) process.env.GEMINI_API_KEY = oldKey;
+  });
 });

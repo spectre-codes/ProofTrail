@@ -16,7 +16,7 @@ ProofTrail pairs AI structured extraction with a deterministic verification engi
 
 - 🟢 **Source Matched**: Exact verbatim supporting quote deterministically matched in the source document. Accurately highlights original character spans in the text.
 - 🟡 **Needs Review**: Supporting quote exists in source, but key parameters are missing or ambiguous (e.g., date without timezone like *"Submit by Friday before midnight"*, vague file format, or unspecified constraint) flagged with an actionable warning.
-- 🔴 **No Source Match**: Extracted quote cannot be matched verbatim anywhere in the source text (deterministic rejection and anti-hallucination guard).
+- 🔴 **No Source Match**: Extracted quote cannot be matched verbatim anywhere in the source text; deterministically rejects unsupported quotations not present in the source text.
 
 Clicking any requirement card smoothly scrolls to and focuses the supporting quote in the source viewer with status-tinted highlighting, creating an interactive, tamper-proof **Proof Trail**.
 
@@ -26,7 +26,7 @@ Clicking any requirement card smoothly scrolls to and focuses the supporting quo
 
 - **Split-Screen Forensic Workspace:** Side-by-side view with source evidence on the left (`#FAFAF9`) and an audit feed on the right.
 - **Bidirectional Proof Trail:** Clicking any card auto-scrolls to and highlights the supporting quote in the document; clicking highlighted text focuses the corresponding card.
-- **Three-Tier Verification:** Real-time badge classification (`Source Matched`, `Needs Review`, `No Source Match`) with ambiguity explanation banners and hallucination rejection alerts.
+- **Three-Tier Verification:** Real-time badge classification (`Source Matched`, `Needs Review`, `No Source Match`) with ambiguity explanation banners; deterministically rejects unsupported quotations not present in the source text.
 - **Interactive Checklists & Progress Bar:** Real-time completion progress tracking with strikethroughs and completion percentages.
 - **Dynamic Category & Status Filtering:** Filter pills for Types (`All`, `Deliverables`, `Deadlines`, `Rules`) and Status (`All`, `Source Matched`, `Needs Review`, `No Source Match`) with live item counts.
 - **Interactive Summary Metric Tiles:** 4 top stat tiles (`Total`, `Source Matched`, `Needs Review`, `No Match`) that double as one-click status filters.
@@ -49,14 +49,14 @@ User Document Text ────┤                                              
 1. **Mode A: Live Gemini 2.5 Flash (Production Mode)**
    - When a `GEMINI_API_KEY` is provided in `.env.local`, custom briefs are sent to Google's `gemini-2.5-flash` model using `@google/genai` with strict structured JSON schema enforcement (`responseSchema`).
    - The model extracts actionable tasks, categorizes them, extracts character-for-character verbatim quotes, and flags potential ambiguities.
-   - All LLM candidate extractions are immediately fed into `lib/verifyQuote.ts` at runtime before returning to the UI, guaranteeing that LLM hallucinations are deterministically caught.
+   - All LLM candidate extractions are immediately fed into `lib/verifyQuote.ts` at runtime before returning to the UI, ensuring the engine deterministically rejects unsupported quotations not present in the source text.
 
 2. **Mode B: Zero-Config Offline Sandbox (Demo & Judging Mode)**
    - When running offline or without an API key, ProofTrail provides an offline sandbox that evaluates the built-in sample hackathon brief fixture.
    - The server does **not** return static pre-computed statuses. Instead, it runs the raw candidate extractions through `verifyItems()` at runtime against the source text to demonstrate all three badge states:
      - 5 valid matches $\to$ `Source Matched`
      - 2 ambiguous matches $\to$ `Needs Review`
-     - 1 deliberate fabricated candidate (*"Submit a 10-page printed team notarized affidavit"*) $\to$ `No Source Match` (demonstrating deterministic hallucination rejection).
+     - 1 deliberate fabricated candidate (*"Submit a 10-page printed team notarized affidavit"*) $\to$ `No Source Match` (demonstrating how the engine deterministically rejects unsupported quotations not present in the source text).
    - **Custom Document Guard:** If custom text is submitted without a `GEMINI_API_KEY`, the server returns a clean HTTP 503 notice explaining that the offline sandbox evaluates the built-in sample brief and that analyzing custom documents requires an API key, preventing confusing or mismatched card outputs.
 
 ---
@@ -67,7 +67,7 @@ User Document Text ────┤                                              
 - **Styling:** [Tailwind CSS](https://tailwindcss.com/) + [Lucide React](https://lucide.dev/)
 - **AI Model & SDK:** Google Gemini 2.5 Flash via `@google/genai` (v2.31.0) with structured output schema
 - **Verification Engine:** Pure TypeScript deterministic token-stream matching (`lib/verifyQuote.ts`)
-- **Test Runner:** Node.js native test runner (`node --test`) with 15 automated unit & route tests
+- **Test Runner:** Node.js native test runner (`node --test`) with 16 automated unit & route tests
 - **License:** [MIT License](LICENSE)
 
 ```
@@ -82,7 +82,7 @@ User Document Text ────┤                                              
 │   ├── Navbar.tsx                 # Header, branding & mode badge
 │   └── SourcePanel.tsx            # Document viewer & interactive quote highlights
 ├── lib/
-│   ├── __tests__/                 # Automated test suites (15 passing tests)
+│   ├── __tests__/                 # Automated test suites (16 passing tests)
 │   │   ├── analyzeRoute.test.ts
 │   │   ├── persistenceAndFiltering.test.ts
 │   │   └── verifyQuote.test.ts
@@ -142,9 +142,9 @@ npm test
 
 ProofTrail uses the Node.js native test runner (`node --test --experimental-strip-types`) with **zero external test framework dependencies**.
 
-**Test Coverage (15/15 passing across 3 suites):**
-- **`lib/__tests__/verifyQuote.test.ts` (7 tests):** Smart quote normalization (`“ ” ‘ ’` $\to$ `" '`), typographic dash conversion (`— –` $\to$ `-`), collapsing whitespace/linebreaks, exact character slice index tracking, ambiguity flag mapping, hallucination catching (`UNVERIFIED` rejection), and empty quote validation.
-- **`lib/__tests__/analyzeRoute.test.ts` (4 tests):** Empty payload validation (HTTP 400), payload size limiting (HTTP 413), offline sandbox runtime candidate verification with all 3 states, and custom text offline guard (HTTP 503).
+**Test Coverage (16/16 passing across 3 suites):**
+- **`lib/__tests__/verifyQuote.test.ts` (7 tests):** Smart quote normalization (`“ ” ‘ ’` $\to$ `" '`), typographic dash conversion (`— –` $\to$ `-`), collapsing whitespace/linebreaks, exact character slice index tracking, ambiguity flag mapping, empty quote validation, and deterministically rejects unsupported quotations not present in the source text (`UNVERIFIED` rejection).
+- **`lib/__tests__/analyzeRoute.test.ts` (5 tests):** Empty payload validation (HTTP 400), payload size limiting (HTTP 413), offline sandbox runtime candidate verification with all 3 states, custom text offline guard (HTTP 503), and substring regression guard preventing altered briefs from receiving sample items.
 - **`lib/__tests__/persistenceAndFiltering.test.ts` (4 tests):** Real-time progress percentage calculation, dynamic category filtering, status filtering (`Source Matched`, `Needs Review`, `No Source Match`), and session serialization format.
 
 ### 6. Production Build
