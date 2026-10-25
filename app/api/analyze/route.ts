@@ -89,7 +89,8 @@ export async function POST(req: Request) {
       // explaining that the offline sandbox only evaluates the built-in Sample Brief fixture.
       return Response.json(
         {
-          error: 'Offline Verification Sandbox only evaluates the built-in Sample Brief fixture. Analyzing custom documents requires a GEMINI_API_KEY configured in .env.local. Click "Load Sample Brief" to test the offline verification engine.',
+          error:
+            'Live extraction for custom documents is not configured in this environment. The built-in demo audits the included Sample Brief. Load the sample brief to explore the verification workflow.',
           isSampleMode: true,
         },
         { status: 503 }

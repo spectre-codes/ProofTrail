@@ -82,7 +82,7 @@ describe('API Route /api/analyze mechanical verification', () => {
     const res = await POST(req);
     assert.strictEqual(res.status, 503);
     const data = await res.json();
-    assert.ok(data.error.includes('GEMINI_API_KEY'));
+    assert.ok(data.error.includes('Live extraction for custom documents is not configured'));
     assert.strictEqual(data.items, undefined);
     assert.strictEqual(data.isSampleMode, true);
 
@@ -103,7 +103,7 @@ describe('API Route /api/analyze mechanical verification', () => {
     const res = await POST(req);
     assert.strictEqual(res.status, 503);
     const data = await res.json();
-    assert.ok(data.error.includes('GEMINI_API_KEY'));
+    assert.ok(data.error.includes('Live extraction for custom documents is not configured'));
     assert.strictEqual(data.items, undefined);
 
     if (oldKey) process.env.GEMINI_API_KEY = oldKey;

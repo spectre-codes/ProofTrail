@@ -30,34 +30,61 @@ Clicking any requirement card smoothly scrolls to and focuses the supporting quo
 - **Interactive Checklists & Progress Bar:** Real-time completion progress tracking with strikethroughs and completion percentages.
 - **Dynamic Category & Status Filtering:** Filter pills for Types (`All`, `Deliverables`, `Deadlines`, `Rules`) and Status (`All`, `Source Matched`, `Needs Review`, `No Source Match`) with live item counts.
 - **Interactive Summary Metric Tiles:** 4 top stat tiles (`Total`, `Source Matched`, `Needs Review`, `No Match`) that double as one-click status filters.
-- **Dual-Mode Architecture:** Live Gemini 2.5 Flash analysis when configured with an API key, plus a zero-config offline sandbox that dynamically exercises the verification engine without requiring credentials.
+- **Built-in Sample Audit & Optional Live Gemini:** Works immediately out of the box auditing the built-in sample brief at runtime with zero setup, with optional live Gemini 2.5 Flash extraction for custom documents.
 - **State Invalidation on Text Edit:** Modifying the source document immediately clears stale audit results and active selections so obsolete extractions are never displayed against modified text.
 - **LocalStorage Persistence:** Session text, checklist state, active filters, and task completion persist across browser refreshes.
 
 ---
 
-## Dual-Mode Architecture
+## Quick Start (Zero-Config Built-in Demo)
 
-ProofTrail supports two operating modes out of the box:
+ProofTrail runs immediately with **zero configuration** and no API key required.
 
+### 1. Prerequisites
+- Node.js v18.0.0 or higher
+- npm v9+
+
+### 2. Installation & Launch
+```bash
+git clone https://github.com/spectre-codes/ProofTrail.git
+cd ProofTrail
+npm install
+npm run dev
 ```
-                       ┌──► [GEMINI_API_KEY Present]  ──► Live Gemini 2.5 Flash (Structured JSON Schema)
-User Document Text ────┤                                                                                 ├──► Deterministic Verification Engine ──► Verified Feed
-                       └──► [No Key / Offline Mode]   ──► Built-in Sample Brief Candidates (Fail-Safe)
-```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-1. **Mode A: Live Gemini 2.5 Flash (Production Mode)**
-   - When a `GEMINI_API_KEY` is provided in `.env.local`, custom briefs are sent to Google's `gemini-2.5-flash` model using `@google/genai` with strict structured JSON schema enforcement (`responseSchema`).
-   - The model extracts actionable tasks, categorizes them, extracts character-for-character verbatim quotes, and flags potential ambiguities.
-   - All LLM candidate extractions are immediately fed into `lib/verifyQuote.ts` at runtime before returning to the UI, ensuring the engine deterministically rejects unsupported quotations not present in the source text.
+### 3. Explore the Verification Workflow
+1. Click **"Load Sample Brief"** to populate the illustrative hackathon guidelines fixture.
+2. Click **"Audit & Verify Requirements"** to trigger the runtime verification engine.
+3. The server runs the candidate requirements through `verifyItems()` in `lib/verifyQuote.ts` at request time against the source text to demonstrate all three verification states:
+   - 🟢 **Source Matched** (5 items): Exact verbatim quote matches mapped to source character spans with interactive highlighting.
+   - 🟡 **Needs Review** (2 items): Ambiguous requirements flagged with actionable warnings (e.g., submission deadline missing date/timezone).
+   - 🔴 **No Source Match** (1 item): Unsupported candidate (*"Submit printed team affidavit by physical mail"*) deterministically rejected as having no supporting quote in the document.
+4. Click any card to auto-scroll and highlight its source quote. Check off completed items to track progress in real time.
 
-2. **Mode B: Zero-Config Offline Sandbox (Demo & Judging Mode)**
-   - When running offline or without an API key, ProofTrail provides an offline sandbox that evaluates the built-in sample hackathon brief fixture.
-   - The server does **not** return static pre-computed statuses. Instead, it runs the raw candidate extractions through `verifyItems()` at runtime against the source text to demonstrate all three badge states:
-     - 5 valid matches $\to$ `Source Matched`
-     - 2 ambiguous matches $\to$ `Needs Review`
-     - 1 deliberate fabricated candidate (*"Submit a 10-page printed team notarized affidavit"*) $\to$ `No Source Match` (demonstrating how the engine deterministically rejects unsupported quotations not present in the source text).
-   - **Custom Document Guard:** If custom text is submitted without a `GEMINI_API_KEY`, the server returns a clean HTTP 503 notice explaining that the offline sandbox evaluates the built-in sample brief and that analyzing custom documents requires an API key, preventing confusing or mismatched card outputs.
+---
+
+## Optional: Live Extraction for Custom Documents
+
+ProofTrail supports live extraction from arbitrary custom briefs using Google Gemini 2.5 Flash:
+
+### 1. Configure Your API Key
+1. Copy `.env.example` to `.env.local`:
+   ```bash
+   cp .env.example .env.local
+   ```
+2. Add your Gemini API key from [Google AI Studio](https://aistudio.google.com/):
+   ```env
+   GEMINI_API_KEY="your-gemini-api-key"
+   ```
+
+### 2. Run Live Analysis
+Restart the development server (`npm run dev`). The header badge updates to **Live Gemini 2.5 Flash**.
+- When analyzing custom briefs, the document is sent to Google's `gemini-2.5-flash` model via `@google/genai` with strict structured JSON schema enforcement (`responseSchema`).
+- The model extracts actionable tasks, categorizes them, extracts character-for-character verbatim quotes, and flags potential ambiguities.
+- All candidate extractions pass directly through `lib/verifyQuote.ts` at runtime before returning to the UI, ensuring the engine deterministically rejects any hallucinated or unsupported quotations.
+
+*(Note: If no `GEMINI_API_KEY` is configured in `.env.local`, ProofTrail safely safeguards against analyzing arbitrary custom documents by returning a clear notice explaining that live extraction is not configured and directing the user to explore the built-in sample brief audit.)*
 
 ---
 
@@ -103,39 +130,8 @@ User Document Text ────┤                                              
 
 ---
 
-## Getting Started
+## Running Automated Tests
 
-### 1. Prerequisites
-- Node.js v18.0.0 or higher
-- npm v9+
-
-### 2. Installation
-```bash
-git clone https://github.com/spectre-codes/ProofTrail.git
-cd ProofTrail
-npm install
-```
-
-### 3. Environment Setup (Optional)
-ProofTrail works out of the box in **Offline Sandbox Mode** for the sample hackathon brief with zero configuration.
-
-To analyze custom briefs with live Gemini 2.5 Flash:
-1. Copy `.env.example` to `.env.local`:
-   ```bash
-   cp .env.example .env.local
-   ```
-2. Add your Gemini API key from [Google AI Studio](https://aistudio.google.com/):
-   ```env
-   GEMINI_API_KEY="your-gemini-api-key"
-   ```
-
-### 4. Running the Development Server
-```bash
-npm run dev
-```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### 5. Running Automated Tests
 ```bash
 npm test
 ```
@@ -147,7 +143,10 @@ ProofTrail uses the Node.js native test runner (`node --test --experimental-stri
 - **`lib/__tests__/analyzeRoute.test.ts` (5 tests):** Empty payload validation (HTTP 400), payload size limiting (HTTP 413), offline sandbox runtime candidate verification with all 3 states, custom text offline guard (HTTP 503), and substring regression guard preventing altered briefs from receiving sample items.
 - **`lib/__tests__/persistenceAndFiltering.test.ts` (4 tests):** Real-time progress percentage calculation, dynamic category filtering, status filtering (`Source Matched`, `Needs Review`, `No Source Match`), and session serialization format.
 
-### 6. Production Build
+---
+
+## Production Build
+
 ```bash
 npm run build
 npm start

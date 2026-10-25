@@ -37,10 +37,10 @@ export function Navbar({ isSampleMode, onReset, itemCount }: NavbarProps) {
             {isSampleMode ? (
               <div
                 className="flex items-center gap-2 px-2.5 py-1 rounded-md bg-zinc-900/60 border border-zinc-700/70 text-zinc-300 font-mono text-[11px] font-medium shadow-2xs"
-                title="Running offline with sample candidate extractions verified through lib/verifyQuote.ts at runtime"
+                title="Running built-in sample audit with candidates verified through lib/verifyQuote.ts at runtime"
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
-                <span className="tracking-wide uppercase">Offline Sandbox (Sample Candidates)</span>
+                <span className="tracking-wide uppercase">Built-in Sample Audit</span>
               </div>
             ) : (
               <div
